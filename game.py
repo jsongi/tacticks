@@ -16,15 +16,16 @@ assets = [
     "assets/bug1.png",
     "assets/attackhighlight.png"
 ]
+
 id = 2 # signify difference between identical unit types
 unit1 = Unit(50, 2, 1, 2, id, "knight")
-id = 3
-unit2 = Unit(50, 2, 1, 2, id, "knight")
-id = 4 # signify difference between identical unit types
-unit3 = Unit(50, 2, 1, 2, id, "knight")
-id = 5
-unit4 = Unit(50, 2, 1, 2, id, "knight")
-chars = [unit1, unit2, unit3, unit4] 
+#id = 3
+#unit2 = Unit(50, 2, 1, 2, id, "knight")
+#id = 4 # signify difference between identical unit types
+#unit3 = Unit(50, 2, 1, 2, id, "knight")
+#id = 5
+#unit4 = Unit(50, 2, 1, 2, id, "knight")
+chars = [unit1] # , unit2, unit3, unit4 
 char_moves = []
 turn_counter = 5
 player_actions = 0
@@ -76,8 +77,9 @@ while running:
                     if player_actions == len(chars):
                         is_player_turn = False
                         player_actions = 0
-                elif boardState[0] == "charSelected" and click_status[1] in board.enemyTypes: # Previous click was selecting a friendly unit and current click is an enemy tile
-                    print("something")
+                elif boardState[0] == "charSelected" and click_status[1] == 9: # Previous click was selecting a friendly unit and current click is an enemy tile
+                    player_actions += 1 # Attacking action
+                    char_moves.append(last_clicked) # The character that was last clicked performed an action
                 elif 2 <= click_status[1] <= 7 and click_status[0] not in char_moves: # Clicked target is a friendly unit and has not been moved before
                     boardState = ["charSelected", click_status[1]]
                     last_clicked = click_status[0]

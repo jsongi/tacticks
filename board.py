@@ -36,6 +36,15 @@ class Board:
                 return ([(char_row, char_col), self.boardState[char_row][char_col]])  # Return id of the targeted character
 
         if((0 <= boardxpos <= 8) and (0 <= boardypos <= 8)):
+            # If the position is an in range enemy position (highlighted) then we need to return some signifier that it's a valid attack action
+            # The way this clears highlights is ugly
+            if (any(tup == (boardxpos, boardypos) for tup, obj in self.enemy_positions)):
+                if ((boardxpos, boardypos) in self.enemy_positions_highlighted): # Valid attack action
+                    self.clear_highlights()
+                    return [(boardxpos, boardypos), 9] # just using 9 as a signifier for now(?)
+                else:
+                    self.clear_highlights()
+                    return [(boardxpos, boardypos), 0] # basically a dead click
             if (self.boardState[boardxpos][boardypos] != 1):
                 self.clear_highlights()
             return [(boardxpos, boardypos), self.boardState[boardxpos][boardypos]]
@@ -128,7 +137,6 @@ class Board:
 
                     self.boardState.append(row)  # Store updated row
                     lineNum += 1
-        print(self.boardState)
 
     def update_board(self, click_status, last_clicked):
         for i in range(len(self.char_positions)):
