@@ -61,7 +61,7 @@ class Board:
             self.visited = set() # Clear set for new movement calculation
         self.enemy_positions_highlighted = []
 
-    def show_movement(self, screen, selectedRow, selectedCol, chars, id):
+    def show_actions(self, screen, selectedRow, selectedCol, chars, id):
         movement_range = chars[id - 2].movement()  # Get movement range
         rows, cols = len(self.boardState), len(self.boardState[0])  # Board dimensions
 
@@ -100,7 +100,8 @@ class Board:
             tile_value = self.boardState[row][col]
             if tile_value == 0:
                 self.boardState[row][col] = 1
-            elif tile_value in self.enemyTypes:
+            elif tile_value in self.enemyTypes: # Attack enemy check
+                
                 self.enemy_positions_highlighted.append((row, col))
 
     def execute_attack(self, char_pos, enemy_pos, chars):
@@ -185,19 +186,24 @@ class Board:
         self.boardState[row2][col2] = temp
         self.clear_highlights()
 
-    def move_enemies(self):
+    def move_enemies(self, chars):
 
         for enemy in self.enemy_positions:
             old_pos = enemy[0][0], enemy[0][1]
-            movement_range = enemy[1].movement()  # Get enemy's movement stat
+            movement_range = enemy[1].movement() 
+            attack_range = enemy[1].range()  
+            attack_value = enemy[1].attack()  
             rows, cols = len(self.boardState), len(self.boardState[0])
             directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]  # Up, Down, Left, Right
             queue = deque([(enemy[0][0], enemy[0][1], [])])  # (row, col, steps, path)
+            char_x_pos = 0
+            char_y_pos = 0
             visited = set()
             
             while queue:
                 row, col, path = queue.popleft()
                 if (row, col) in self.char_positions:
+                    char_x_pos, char_y_pos = row, col
                     break # Move exactly movement_range steps
                 
                 # Continue searching within movement range
@@ -214,20 +220,36 @@ class Board:
                         queue.append((new_row, new_col, path + [new_pos]))
             # We finished searching the movement range, move the enemy to new position calculated
 
-            #TODO: CHECKS FOR ATTACKS INSTEAD OF MOVEMENT FOR MINIMUM CASES, CHECK BY RANGE
-            new_pos = path[movement_range - 1] if len(path) >= movement_range else path[-1]
-            if len(path) == 1:
-                new_pos = old_pos
-            elif len(path) == 2:
-                new_pos = path[0]
-            for i, (pos, enemy) in enumerate(self.enemy_positions): #this is not efficient
-                if pos == old_pos:
-                    
-                    self.boardState[old_pos[0]][old_pos[1]] = 0
-                    self.enemy_positions[i] = (new_pos, enemy)  # Replace tuple with new position
-                    self.boardState[new_pos[0]][new_pos[1]] = enemy.id()
-                    #print(self.boardState[end_pos[0]][end_pos[1]])
-                    continue  # Exit loop after updating
+            #TODO: this is also ugly
+            if len(path) - 1 <= attack_range: # Either do not move, and attack targeted character, or move into the targeted character and attack
+                if len(path) - 1 == attack_range and attack_range == 1: # melee units should move into range to attack
+                    print("here")
+                    new_pos = path[0]
+                    for i, (pos, enemy) in enumerate(self.enemy_positions): #this is not efficient
+                        if pos == old_pos:
+                            
+                            self.boardState[old_pos[0]][old_pos[1]] = 0
+                            self.enemy_positions[i] = (new_pos, enemy)  # Replace tuple with new position
+                            self.boardState[new_pos[0]][new_pos[1]] = enemy.id()
+                            continue  # Exit loop after updating
+                # Find the id of the targeted character and update health
+                if len(path) - 1 <= attack_range:
+                    for c in chars:
+                        if c.id() == self.boardState[char_x_pos][char_y_pos]:
+                            c.update_health(attack_value)
+                            print(c.health())
+                            if c.health() < 0:
+                                self.boardState[char_x_pos][char_y_pos] = 0
+
+            else: # Out of attack range, move as close as possible
+                new_pos = path[movement_range - 1] if len(path) >= movement_range else path[-1]
+                for i, (pos, enemy) in enumerate(self.enemy_positions): #this is not efficient
+                    if pos == old_pos:
+                        
+                        self.boardState[old_pos[0]][old_pos[1]] = 0
+                        self.enemy_positions[i] = (new_pos, enemy)  # Replace tuple with new position
+                        self.boardState[new_pos[0]][new_pos[1]] = enemy.id()
+                        continue  # Exit loop after updating
 
         return 0  # No valid move found, stay in place
 
@@ -264,7 +286,7 @@ class Board:
                         else:
                             screen.blit(self.images[int(self.boardState[row][col])], (x, y))
                 
-                self.show_movement(screen, selectedRow, selectedCol, chars, id)
+                self.show_actions(screen, selectedRow, selectedCol, chars, id)
 
             case "default":
                 self.clear_highlights()

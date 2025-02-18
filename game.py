@@ -91,7 +91,7 @@ while running:
                 else:
                     boardState = ["default", 0]
         else:
-            board.move_enemies()
+            board.move_enemies(chars)
             is_player_turn = True
             char_moves = []
         
