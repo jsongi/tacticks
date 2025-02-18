@@ -18,7 +18,7 @@ assets = [
 ]
 
 id = 2 # signify difference between identical unit types
-unit1 = Unit(50, 2, 1, 2, id, "knight")
+unit1 = Unit(50, 999, 1, 2, id, "knight")
 #id = 3
 #unit2 = Unit(50, 2, 1, 2, id, "knight")
 #id = 4 # signify difference between identical unit types
@@ -51,7 +51,7 @@ cell_height = 31
 
 board = Board(assets)
 
-board.read_board("aaa", chars, round)
+board.read_board("test", chars, round)
 
 boardState = ["default", 0]
 
@@ -80,6 +80,11 @@ while running:
                 elif boardState[0] == "charSelected" and click_status[1] == 9: # Previous click was selecting a friendly unit and current click is an enemy tile
                     player_actions += 1 # Attacking action
                     char_moves.append(last_clicked) # The character that was last clicked performed an action
+                    boardState = ["default", 0]
+                    board.execute_attack(last_clicked, click_status[0], chars)
+                    if player_actions == len(chars):
+                        is_player_turn = False
+                        player_actions = 0
                 elif 2 <= click_status[1] <= 7 and click_status[0] not in char_moves: # Clicked target is a friendly unit and has not been moved before
                     boardState = ["charSelected", click_status[1]]
                     last_clicked = click_status[0]

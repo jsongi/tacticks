@@ -103,6 +103,37 @@ class Board:
             elif tile_value in self.enemyTypes:
                 self.enemy_positions_highlighted.append((row, col))
 
+    def execute_attack(self, char_pos, enemy_pos, chars):
+        #TODO: Check range, if melee move into melee range, if ranged then we don't care because only valid highlights should've been calculated
+        #Execute attack onto the target enemy, reduce their hp by the characters attack, apply any additional effects onto them from other characters
+        
+        self.clear_highlights()
+
+        #TODO: Checks for enhancements on characters, end of turn / beginning of turn or passive effects
+        char_x_pos, char_y_pos = char_pos
+        enemy_x_pos, enemy_y_pos = enemy_pos
+        char = None
+        enemy = None
+
+        char_id = self.boardState[char_x_pos][char_y_pos]
+        for c in chars:
+            if char_id == c.id():
+                char = c
+                break        
+
+        for e in self.enemy_positions:
+            if e[0] == (enemy_x_pos, enemy_y_pos):
+                enemy = e
+
+        enemy[1].update_health(c.attack())
+
+        if enemy[1].health() <= 0:
+            self.boardState[enemy_x_pos][enemy_y_pos] = 0
+            # Modifies the list of enemies in place to remove the targeted enemy
+            self.enemy_positions[:] = [entry for entry in self.enemy_positions if entry[0] != (enemy_x_pos, enemy_y_pos)] 
+
+        return
+
     def read_board(self, level, chars, round):
         capturing = False
         lineNum = 0
