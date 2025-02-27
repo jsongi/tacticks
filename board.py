@@ -7,7 +7,7 @@ cell_height = 32
 
 class Board:
     def __init__(self, assets):
-        self.enemyTypes = [9]
+        self.enemyTypes = [14, 15, 16, 17, 18, 19, 20, 21, 22]
         self.idTypes = []
         self.boardState = []
         self.char_positions = []
@@ -62,7 +62,7 @@ class Board:
         self.enemy_positions_highlighted = []
 
     def show_actions(self, screen, selectedRow, selectedCol, chars, id):
-        movement_range = chars[id - 2].movement()  # Get movement range
+        movement_range = chars[id - 4].movement()  # Get movement range
         rows, cols = len(self.boardState), len(self.boardState[0])  # Board dimensions
 
         self.clear_highlights()
@@ -87,7 +87,7 @@ class Board:
                     tile_value = self.boardState[new_row][new_col]
                     self.visited.add((new_row, new_col))  # Mark as visited
     
-                    if tile_value > 7: #If friendly character, do not mark tile but continue search
+                    if 4 <= tile_value <= 9: #If friendly character, do not mark tile but continue search
                         continue
 
                     queue.append((new_row, new_col, steps + 1))  # Enqueue with step count
@@ -101,7 +101,6 @@ class Board:
             if tile_value == 0:
                 self.boardState[row][col] = 1
             elif tile_value in self.enemyTypes: # Attack enemy check
-                
                 self.enemy_positions_highlighted.append((row, col))
 
     def execute_attack(self, char_pos, enemy_pos, chars):
@@ -158,7 +157,7 @@ class Board:
                             if usedChars < len(chars):  
                                 row.append(chars[usedChars].id())  # Replace with available char
                                 self.char_positions.append((lineNum, len(row) - 1))  # Store (row, col)
-                                self.idTypes.append((chars[usedChars].id(), chars[usedChars].type()))
+                                self.idTypes.append((chars[usedChars].id(), chars[usedChars].typeImage()))
                                 usedChars += 1
                             else:
                                 row.append(0)  # Replace with 0 if no available chars left
@@ -213,17 +212,17 @@ class Board:
 
                     if (0 <= new_row < rows and 0 <= new_col < cols and  # Stay in bounds
                         new_pos not in visited and                     # Avoid revisiting
-                        new_pos not in self.enemy_positions and             # Avoid other enemies
-                        0 <= self.boardState[new_row][new_col] <= 7):            # Only move on passable tiles
+                        new_pos not in self.enemy_positions):
+                        if(self.boardState[new_row][new_col] <= 1 or 
+                        4 <= self.boardState[new_row][new_col] <= 9):           # Only move on passable tiles
                         
-                        visited.add(new_pos)
-                        queue.append((new_row, new_col, path + [new_pos]))
+                            visited.add(new_pos)
+                            queue.append((new_row, new_col, path + [new_pos]))
             # We finished searching the movement range, move the enemy to new position calculated
 
             #TODO: this is also ugly
             if len(path) - 1 <= attack_range: # Either do not move, and attack targeted character, or move into the targeted character and attack
                 if len(path) - 1 == attack_range and attack_range == 1: # melee units should move into range to attack
-                    print("here")
                     new_pos = path[0]
                     for i, (pos, enemy) in enumerate(self.enemy_positions): #this is not efficient
                         if pos == old_pos:
@@ -237,7 +236,6 @@ class Board:
                     for c in chars:
                         if c.id() == self.boardState[char_x_pos][char_y_pos]:
                             c.update_health(attack_value)
-                            print(c.health())
                             if c.health() < 0:
                                 self.boardState[char_x_pos][char_y_pos] = 0
 
@@ -269,7 +267,7 @@ class Board:
                         screen.blit(self.images[0], (col * cell_width, row * cell_height))
                 for (row, col), _ in self.enemy_positions:
                     if (row, col) in self.enemy_positions_highlighted:
-                        screen.blit(self.images[10], (col * cell_width, row * cell_height))
+                        screen.blit(self.images[3], (col * cell_width, row * cell_height))
                     else:
                         screen.blit(self.images[0], (col * cell_width, row * cell_height))
 
@@ -278,7 +276,7 @@ class Board:
                     for col in range(len(self.boardState[0])):
                         x = col * cell_width
                         y = row * cell_height
-                        if(2 <= int(self.boardState[row][col]) <= 7):
+                        if(4 <= int(self.boardState[row][col]) <= 9):
                             for pair in self.idTypes:
                                 if int(self.boardState[row][col]) == pair[0]:
                                     screen.blit(self.images[pair[1]], (x, y))
@@ -301,7 +299,7 @@ class Board:
                     for col in range(len(self.boardState[0])):
                         x = col * cell_width
                         y = row * cell_height
-                        if(2 <= int(self.boardState[row][col]) <= 7):
+                        if(4 <= int(self.boardState[row][col]) <= 9):
                             for pair in self.idTypes:
                                 if int(self.boardState[row][col]) == pair[0]:
                                     screen.blit(self.images[pair[1]], (x, y))
