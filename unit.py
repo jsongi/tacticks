@@ -44,6 +44,8 @@ class Unit:
             charType = 6
         elif(self._type == "Wizard"):
             charType = 7
+        elif(self._type == "Healer"):
+            charType = 8
         
         return charType
     
