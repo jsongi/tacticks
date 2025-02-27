@@ -39,6 +39,8 @@ unit1 = Unit(50, 999, 1, 2, id, "Knight", 4)
 #unit3 = Unit(50, 2, 1, 2, id, "knight")
 #id = 5
 #unit4 = Unit(50, 2, 1, 2, id, "knight")
+upgrades = []
+patrons = []
 chars = [unit1] # , unit2, unit3, unit4 
 char_moves = []
 turn_counter = 5
@@ -47,7 +49,7 @@ is_player_turn = True
 last_clicked = -1
 round = 1
 result = 1
-gold = 5
+gold = 9999 #set as this for testing, lower to 5(?) later
 game_state = "shop"
 
 
@@ -71,8 +73,6 @@ cell_height = 31
 shop = Shop(assets)
 board = Board(assets)
 
-board.read_board("test", chars, round)
-
 boardState = ["default", 0]
 
 running = True
@@ -88,10 +88,12 @@ while running:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 click_status = shop.check_click(mouse_x, mouse_y, cell_width, cell_height)
                 
-                result = shop.handle_click(gold, click_status)
+                gold, result = shop.handle_click(gold, click_status, patrons, chars, upgrades)
                 
             if result == 0:   
+                    print(chars)
                     game_state = "battle"
+                    board.read_board("test", chars, round)
                     screen.fill((255, 255, 255))
             else:
                 shop.display(screen, gold)

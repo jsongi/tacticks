@@ -47,7 +47,7 @@ class Shop:
         self._upgrades = [
             Upgrade(22, 1, 1, 4, "Flat HP"),
             Upgrade(22, 1, 2, 4, "Scaling HP"),
-            Upgrade(22, 1, 3, 4, "Scaling HP")
+            Upgrade(22, 1, 3, 4, "Flat Attack")
         ]
 
         # Mark all items as not purchased initially
@@ -66,6 +66,8 @@ class Shop:
 
     def refresh_items(self):
         """ Selects a random subset while filtering out bought items. """
+
+        # TODO: Should be weighted differently by rarity
         self.displayed_patrons = random.sample(
             [p for p in self._patrons if p not in self._owned_patrons], 3
         )
@@ -77,7 +79,7 @@ class Shop:
         )
 
 
-    def display(self, screen, shop):
+    def display(self, screen, gold):
         """ Draw shop items and reroll button. """
         screen.fill((255, 255, 255))  # Clear screen
 
@@ -102,15 +104,20 @@ class Shop:
         y_offset = 200
         for i, item in enumerate(self.displayed_units):
             pygame.draw.rect(screen, (0, 0, 200), (550, y_offset, 200, 50))
-            text_surface = font.render(f"{item.type()} - ${item.cost()}", True, (255, 255, 255))
+            text_surface = font.render(f"{item.type()} - ${item.getCost()}", True, (255, 255, 255))
             screen.blit(text_surface, (560, y_offset + 10))
             screen.blit(self._images[item.typeImage()], (680, y_offset - 22))
             y_offset += 70
 
         # Reroll Button
-        pygame.draw.rect(screen, (255, 100, 0), (300, 500, 200, 50))
+        pygame.draw.rect(screen, (255, 100, 0), (210, 500, 100, 50))
         reroll_text = font.render(f"Reroll (${self.reroll_cost})", True, (0, 0, 0))
-        screen.blit(reroll_text, (320, 510))
+        screen.blit(reroll_text, (220, 515))
+
+        # Continue Button
+        pygame.draw.rect(screen, (255, 100, 0), (500, 500, 100, 50))
+        continue_text = font.render(f"Continue", True, (0, 0, 0))
+        screen.blit(continue_text, (510, 515))
 
         pygame.display.flip()
 
@@ -134,25 +141,48 @@ class Shop:
         y_offset = 200
         for item in self.displayed_units:
             if 550 <= mouse_x <= 750 and y_offset <= mouse_y <= y_offset + 50:
-                print("item")
                 return item
             y_offset += 70
 
         # Check reroll button
-        if 300 <= mouse_x <= 500 and 500 <= mouse_y <= 550:
-            print("reroll")
+        if 210 <= mouse_x <= 310 and 500 <= mouse_y <= 550:
             return "reroll"
+
+        # Check continue button
+        if 500 <= mouse_x <= 600 and 500 <= mouse_y <= 550:
+            return "continue"
 
         return None
 
-    def handle_click(self, gold, clicked_asset):
+    def handle_click(self, gold, clicked_asset, patrons, chars, upgrades):
         """ Handles purchases and rerolling. """
+
+        result = 1
+        if clicked_asset == None:
+            return gold, result
         if clicked_asset == "reroll" and gold >= self.reroll_cost:
             gold -= self.reroll_cost
             self.refresh_items()
-        elif isinstance(clicked_asset, dict) and gold >= clicked_asset["cost"]:
-            gold -= clicked_asset["cost"]
-            clicked_asset["bought"] = True  # Mark item as purchased
-            self.refresh_items()  # Remove bought items from display
-
-        return gold  # Return updated gold amount
+            return gold, result
+        elif clicked_asset == "continue":
+            result = 0
+            return gold, result  # Return updated gold amount
+        elif clicked_asset in self._patrons and gold >= clicked_asset.getCost():
+            gold -= clicked_asset.getCost()
+            # TODO: Mark item as purchased
+            patrons.append(clicked_asset)
+            # TODO: Remove bought items from display
+            return gold, result
+        # Calculate new id for unit in board display
+        elif clicked_asset in self._units and gold >= clicked_asset.getCost() and len(chars) < 6:
+            gold -= clicked_asset.getCost()
+            clicked_asset.setId(len(chars) + 4)
+            chars.append(clicked_asset)
+            print(chars)
+            return gold, result
+        elif clicked_asset in self._upgrades and gold >= clicked_asset.getCost():
+            gold -= clicked_asset.getCost()
+            upgrades.append(clicked_asset)
+            return gold, result
+        else:
+            return gold, result
