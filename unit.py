@@ -27,7 +27,7 @@ class Unit:
     def setId(self, id):
         self._id = id
 
-    def cost(self) -> int:
+    def getCost(self) -> int:
         return self._cost
 
     def type(self) -> int:

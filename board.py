@@ -15,6 +15,7 @@ class Board:
         self.enemy_positions_highlighted = []
         self.images = []
         self.visited = set()
+        self.visited_attacks = set()
         for image in assets:
             self.images.append(pygame.image.load(image)) 
 
@@ -55,15 +56,28 @@ class Board:
         if len(self.visited) > 1: # Movement previously calculated
             for row, col in self.visited:
                 tile_value = self.boardState[row][col]
-                if tile_value == 1 or tile_value == 10:
+                if tile_value == 1 or tile_value == 3:
+                    self.boardState[row][col] = 0
+
+            for row, col in self.visited_attacks:
+                tile_value = self.boardState[row][col]
+                if tile_value == 1 or tile_value == 3:
                     self.boardState[row][col] = 0
 
             self.visited = set() # Clear set for new movement calculation
+            self.visited_attacks = set()
+
         self.enemy_positions_highlighted = []
 
     def show_actions(self, screen, selectedRow, selectedCol, chars, id):
+        attack_range = chars[id - 4].range()
         movement_range = chars[id - 4].movement()  # Get movement range
         rows, cols = len(self.boardState), len(self.boardState[0])  # Board dimensions
+        search_attack_actions = False
+        searching_attacks = False
+
+        if attack_range > movement_range:
+            search_attack_actions = True
 
         self.clear_highlights()
 
@@ -77,7 +91,13 @@ class Board:
 
             # Stop BFS when max movement range is reached
             if steps >= movement_range:
-                continue
+                if search_attack_actions:
+                    if steps >= attack_range:
+                        continue
+                    else:
+                        searching_attacks = True
+                else:
+                    continue    
 
             for dr, dc in directions:
                 new_row, new_col = row + dr, col + dc
@@ -85,7 +105,10 @@ class Board:
                 if (0 <= new_row < rows and 0 <= new_col < cols and (new_row, new_col) not in self.visited):               
                     
                     tile_value = self.boardState[new_row][new_col]
-                    self.visited.add((new_row, new_col))  # Mark as visited
+                    if searching_attacks:
+                        self.visited_attacks.add((new_row, new_col))
+                    else:
+                        self.visited.add((new_row, new_col))  # Mark as visited
     
                     if 4 <= tile_value <= 9: #If friendly character, do not mark tile but continue search
                         continue
@@ -93,7 +116,7 @@ class Board:
                     queue.append((new_row, new_col, steps + 1))  # Enqueue with step count
 
                     # Draw movement highlight on screen (assuming image 1 is a highlight texture)
-                    if tile_value == 0:
+                    if tile_value == 0 and not searching_attacks:
                         screen.blit(self.images[1], (new_col * cell_width, new_row * cell_height))
                         
         for row, col in self.visited:
@@ -102,6 +125,12 @@ class Board:
                 self.boardState[row][col] = 1
             elif tile_value in self.enemyTypes: # Attack enemy check
                 self.enemy_positions_highlighted.append((row, col))
+
+        for row, col in self.visited_attacks:
+            tile_value = self.boardState[row][col]
+            if tile_value in self.enemyTypes: # Attack enemy check
+                self.enemy_positions_highlighted.append((row, col))
+
 
     def execute_attack(self, char_pos, enemy_pos, chars):
         #TODO: Check range, if melee move into melee range, if ranged then we don't care because only valid highlights should've been calculated
