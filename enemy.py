@@ -2,7 +2,7 @@ class Enemy:
 
     def __init__(self, round, id):
         self.stats = [
-            [25, 5, 1, 2, 14, "Beetle"], # Beetle
+            [10, 2, 1, 2, 14, "Beetle"], # Beetle
             [15, 3, 3, 2, 15, "Tick"], # Tick
             [], # Articklery
                 ]
