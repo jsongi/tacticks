@@ -110,15 +110,14 @@ class Board:
                     else:
                         self.visited.add((new_row, new_col))  # Mark as visited
     
-                    if 4 <= tile_value <= 9: #If friendly character, do not mark tile but continue search
-                        continue
+                    #if 4 <= tile_value <= 9: #If friendly character, do not mark tile but continue search
+                        #continue
 
                     queue.append((new_row, new_col, steps + 1))  # Enqueue with step count
-
                     # Draw movement highlight on screen (assuming image 1 is a highlight texture)
                     if tile_value == 0 and not searching_attacks:
                         screen.blit(self.images[1], (new_col * cell_width, new_row * cell_height))
-                        
+
         for row, col in self.visited:
             tile_value = self.boardState[row][col]
             if tile_value == 0:
@@ -130,7 +129,6 @@ class Board:
             tile_value = self.boardState[row][col]
             if tile_value in self.enemyTypes: # Attack enemy check
                 self.enemy_positions_highlighted.append((row, col))
-
 
     def execute_attack(self, char_pos, enemy_pos, chars):
         #TODO: Check range, if melee move into melee range, if ranged then we don't care because only valid highlights should've been calculated
@@ -161,29 +159,32 @@ class Board:
             # Modifies the list of enemies in place to remove the targeted enemy
             self.enemy_positions[:] = [entry for entry in self.enemy_positions if entry[0] != (enemy_x_pos, enemy_y_pos)] 
 
-        return
+        return len(self.enemy_positions)
 
     def read_board(self, level, chars, round):
         capturing = False
         lineNum = 0
         usedChars = 0
 
+        # Clear board state to read in fresh level
+        self.boardState = []
+
         with open("levels.txt", 'r') as file:
             
-            for line in file:
-                if level in line:  # Find start marker
+            for line in file:        
+                if level == line.strip():  # Find start marker
                     capturing = True
                     continue
                 
                 if capturing:
-                    if "nd" in line:  # Stop when reaching end marker
+                    if "nd" == line.strip():  # Stop when reaching end marker
                         break
                     
                     row = []
             
                     for num in map(int, line.split()):  # Convert each number to int
                         if num == 1:
-                            if usedChars < len(chars):  
+                            if usedChars < len(chars):
                                 row.append(chars[usedChars].id())  # Replace with available char
                                 self.char_positions.append((lineNum, len(row) - 1))  # Store (row, col)
                                 self.idTypes.append((chars[usedChars].id(), chars[usedChars].typeImage()))
@@ -192,7 +193,7 @@ class Board:
                                 row.append(0)  # Replace with 0 if no available chars left
                         else:
                             if num in self.enemyTypes:
-                                self.enemy_positions.append(((lineNum, len(row)), Enemy(round, 9)))
+                                self.enemy_positions.append(((lineNum, len(row)), Enemy(round, num)))
                             row.append(num)  # Keep other numbers unchanged
 
                     self.boardState.append(row)  # Store updated row
@@ -280,6 +281,11 @@ class Board:
 
         return 0  # No valid move found, stay in place
 
+    def activate_patrons(self, chars, patrons):
+        for patron in patrons:
+            if patron.getEffectType() == 3:
+                patron.activateEffect(chars, self.enemy_positions)
+
     def display(self, screen, displayType, chars):
         match displayType[0]:
             case "charSelected":
@@ -334,4 +340,5 @@ class Board:
                                     screen.blit(self.images[pair[1]], (x, y))
                         else:
                             screen.blit(self.images[int(self.boardState[row][col])], (x, y))
-                        
+        
+        # Draw patrons and UI
