@@ -1,4 +1,5 @@
 import pygame
+import random
 #from enemy import 
 from board import Board
 from unit import Unit
@@ -28,30 +29,30 @@ assets = [
     "assets/tempgrasstile.png", # enemy type, 20
     "assets/tempgrasstile.png", # enemy type, 21
     "assets/tempgrasstile.png", # enemy type, 22
-    "assets/plaguedoctor.png" # , 23
+    "assets/plaguedoctor.png", # , 23
+    "assets/jackofalltrades.png" # , 24
 ]
+levels = [["aaa", "aab", "aac", "aad", "aae"], 
+          ["aba", "abb", "abc", "abd", "abe"],
+          ]
 #id has to start from 4
-id = 4 # signify difference between identical unit types
-unit1 = Unit(50, 999, 1, 2, id, "Knight", 4)
-#id = 3
-#unit2 = Unit(25, 2, 4, 2, id, "archer")
-#id = 4 # signify difference between identical unit types
-#unit3 = Unit(50, 2, 1, 2, id, "knight")
-#id = 5
-#unit4 = Unit(50, 2, 1, 2, id, "knight")
-upgrades = []
+unit1 = Unit(40, 999, 0, 8, 2, 4, "Knight", 4)
 patrons = []
 chars = [unit1] # , unit2, unit3, unit4 
 char_moves = []
 turn_counter = 5
+level = "aaa"
+level_counter = -1
+current_level = 3
+selected_levels = []
 player_actions = 0
 is_player_turn = True
 last_clicked = -1
 round = 1
 result = 1
-gold = 9999 #set as this for testing, lower to 5(?) later
+gold = 5 #set as this for testing, lower to 5(?) later
 game_state = "shop"
-
+enemies_remaining = 1
 
 # Initialize Pygame
 pygame.init()
@@ -86,15 +87,32 @@ while running:
             #do shop stuff
             if event.type == pygame.MOUSEBUTTONDOWN:  # Detect mouse click
                 mouse_x, mouse_y = pygame.mouse.get_pos()
-                click_status = shop.check_click(mouse_x, mouse_y, cell_width, cell_height)
+                click_status = shop.check_click(mouse_x, mouse_y)
                 
-                gold, result = shop.handle_click(gold, click_status, patrons, chars, upgrades)
+                gold, result = shop.handle_click(gold, click_status, patrons, chars)
                 
-            if result == 0:   
-                    print(chars)
+            if result == 0:  
+                    if current_level < 2:
+                        current_level += 1
+                    else:
+                       
+                        level_counter += 1
+                        if level_counter == len(levels):
+                            level_counter = 0 
+                        
+                        available_levels = levels[level_counter][:-1]
+                        selected_levels = random.sample(available_levels, 2)
+                        selected_levels.append(levels[level_counter][-1])
+                        
+                        current_level = 0
+                        #print(selected_levels)
+
+                    level = selected_levels[current_level]
+
                     game_state = "battle"
-                    board.read_board("test", chars, round)
+                    board.read_board(level, chars, round)
                     screen.fill((255, 255, 255))
+                    result = 1
             else:
                 shop.display(screen, gold)
         else:
@@ -117,7 +135,7 @@ while running:
                         player_actions += 1 # Attacking action
                         char_moves.append(last_clicked) # The character that was last clicked performed an action
                         boardState = ["default", 0]
-                        board.execute_attack(last_clicked, click_status[0], chars)
+                        enemies_remaining = board.execute_attack(last_clicked, click_status[0], chars)
                         if player_actions == len(chars):
                             is_player_turn = False
                             player_actions = 0
@@ -127,11 +145,26 @@ while running:
                     else:
                         boardState = ["default", 0]
             else:
+                #Player turn has finished, can apply end of turn effects here
+                board.activate_patrons(chars, patrons)
+
                 board.move_enemies(chars)
                 is_player_turn = True
                 char_moves = []
             
             board.display(screen, boardState, chars)
-        
+
+            # Handle end of round actions, switch to shop and get ready to load next level
+            if(enemies_remaining == 0):
+                enemies_remaining = 1
+                game_state = "shop"
+                # Add interest gold here
+                gold += 3
+                char_moves = []
+                is_player_turn = True
+                player_actions = 0
+
+                shop.refresh_items()
+                screen.fill((255, 255, 255))
             
         pygame.display.flip()  
