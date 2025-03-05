@@ -11,7 +11,7 @@ class Patron:
     def getImage(self):
         return self._imageNum
     
-    # Beginning of round (1), on attack (2), after turn (3), during shop (4), during round (5),
+    # Beginning of round (1), on attack (2), after turn (3), during shop (4), during round (5)
     def getEffectType(self):
         return self._effectType
 
@@ -58,7 +58,7 @@ class Patron:
                 return
             case 14: #Jack
                 for char in chars:
-                    char.addHealth(30)
+                    char.addTotalHealth(30)
                     char.addAttack(8)
                     char.addMagic(8)
                 return
