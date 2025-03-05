@@ -23,27 +23,30 @@ class Shop:
         ]
         
         self._owned_units = [
-
+            Unit(40, 40, 3, 0, 1, 2, 4, "Knight", 4, False),
         ]
 
         self._patrons = [
             Patron(23, 3, 20, 6, "Plague Doctor"),
-            Patron(24, 5, 14, 4, "Jack"),
+            Patron(24, 4, 14, 4, "Jack"),
+            Patron(23, 3, 20, 4, "Placeholder"),
+            Patron(23, 3, 20, 4, "Placeholder"),
+            Patron(23, 3, 20, 4, "Placeholder"),
             Patron(23, 3, 20, 4, "Placeholder"),
             Patron(23, 3, 20, 4, "Placeholder")
         ]
 
         self._units = [
-            Unit(40, 3, 0, 1, 2, 0, "Knight", 4),
-            Unit(30, 2, 0, 1, 4, 0, "Thief", 4),
-            Unit(25, 4, 0, 3, 3, 0, "Archer", 4),
-            Unit(20, 0, 6, 3, 2, 0, "Wizard", 4),
-            Unit(20, 0, 3, 3, 3, 0, "Healer", 3),
-            Unit(70, 15, 0, 1, 2, 0, "Executioner", 8),
-            Unit(50, 10, 0, 1, 4, 0, "Gambler", 8),
-            Unit(40, 40, 0, 20, 1, 0, "Ballista", 8),
-            Unit(40, 0, 25, 4, 2, 0, "Archmage", 8),
-            Unit(30, 0, 20, 4, 2, 0, "Mystic", 8)
+            Unit(40, 40, 3, 0, 1, 2, 0, "Knight", 4, False),
+            Unit(30, 30, 2, 0, 1, 4, 0, "Thief", 4, False),
+            Unit(25, 25, 4, 0, 3, 3, 0, "Archer", 4, False),
+            Unit(25, 25, 0, 6, 3, 2, 0, "Wizard", 4, True),
+            Unit(20, 20, 0, 3, 3, 3, 0, "Healer", 3, True),
+            Unit(70, 70, 15, 0, 1, 2, 0, "Executioner", 8, False),
+            Unit(50, 50, 10, 0, 1, 4, 0, "Gambler", 8, False),
+            Unit(40, 40, 40, 0, 20, 1, 0, "Ballista", 8, False),
+            Unit(40, 40, 0, 25, 4, 2, 0, "Archmage", 8, True),
+            Unit(30, 30, 0, 20, 4, 2, 0, "Mystic", 8, True)
         ]
         # TODO: The images slots for this are temporary and need to be updated
         self._upgrades = [
@@ -187,6 +190,8 @@ class Shop:
             gold -= clicked_asset.getCost()
             clicked_asset.setPurchased(True)
             patrons.append(clicked_asset)
+            if clicked_asset.getEffectType() == 4:
+                clicked_asset.activateEffect(chars, None)
             self.displayed_patrons[self.displayed_patrons.index(clicked_asset)] = None
             return gold, result
         elif clicked_asset in self._units and gold >= clicked_asset.getCost() and len(chars) < 6:
