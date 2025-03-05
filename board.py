@@ -5,6 +5,8 @@ from enemy import Enemy
 cell_width = 32
 cell_height = 32
 
+pygame.font.init()
+font = pygame.font.Font(None, 28)
 class Board:
     def __init__(self, assets):
         self.enemyTypes = [14, 15, 16, 17, 18, 19, 20, 21, 22]
@@ -286,7 +288,10 @@ class Board:
             if patron.getEffectType() == 3:
                 patron.activateEffect(chars, self.enemy_positions)
 
-    def display(self, screen, displayType, chars):
+    def display(self, screen, displayType, chars, patrons):
+        
+        screen.fill((255, 255, 255))
+        
         match displayType[0]:
             case "charSelected":
                 selectedRow = -1
@@ -341,4 +346,27 @@ class Board:
                         else:
                             screen.blit(self.images[int(self.boardState[row][col])], (x, y))
         
-        # Draw patrons and UI
+        # Drawing UI
+        
+        # Draw character stats
+        x = 0
+        y = 300
+
+        
+
+        for char in chars:
+            screen.blit(self.images[char.typeImage()], (x, y))
+            text_surface = font.render(f"{char.health()} / {char.total_health()}", True, (0, 0, 0))
+            screen.blit(text_surface, (x + 70, y + 32))
+            y += 32
+
+        y = 500
+        # Draw patrons
+        for patron in patrons:
+            screen.blit(self.images[patron.getImage()], (x, y))
+            x += 35
+        
+        pygame.display.flip()
+
+        # TODO: UI for enemies
+
