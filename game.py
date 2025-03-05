@@ -36,9 +36,14 @@ levels = [["aaa", "aab", "aac", "aad", "aae"],
           ["aba", "abb", "abc", "abd", "abe"],
           ]
 #id has to start from 4
-unit1 = Unit(40, 999, 0, 8, 2, 4, "Knight", 4)
+unit1 = Unit(40, 40, 999, 0, 8, 2, 4, "Knight", 4, False)
+unit2 = Unit(40, 40, 999, 0, 8, 2, 5, "Knight", 4, False)
+
+unit4 = Unit(40, 40, 999, 0, 8, 2, 6, "Knight", 4, False)
+
+unit3 = Unit(40, 40, 999, 0, 8, 2, 7, "Knight", 4, False)
 patrons = []
-chars = [unit1] # , unit2, unit3, unit4 
+chars = [unit1, unit2, unit3, unit4] # , unit2, unit3, unit4 
 char_moves = []
 turn_counter = 5
 level = "aaa"
@@ -50,7 +55,7 @@ is_player_turn = True
 last_clicked = -1
 round = 1
 result = 1
-gold = 5 #set as this for testing, lower to 5(?) later
+gold = 999 #set as this for testing, lower to 5(?) later
 game_state = "shop"
 enemies_remaining = 1
 
@@ -152,7 +157,7 @@ while running:
                 is_player_turn = True
                 char_moves = []
             
-            board.display(screen, boardState, chars)
+            board.display(screen, boardState, chars, patrons)
 
             # Handle end of round actions, switch to shop and get ready to load next level
             if(enemies_remaining == 0):
