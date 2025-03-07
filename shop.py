@@ -43,8 +43,8 @@ class Shop:
             Unit(25, 25, 0, 6, 3, 2, 0, "Wizard", 4, True),
             Unit(20, 20, 0, 3, 3, 3, 0, "Healer", 3, True),
             Unit(70, 70, 15, 0, 1, 2, 0, "Executioner", 8, False),
-            Unit(50, 50, 10, 0, 1, 4, 0, "Gambler", 8, False),
-            Unit(40, 40, 40, 0, 20, 1, 0, "Ballista", 8, False),
+            Unit(50, 50, 10, 0, 1, 4, 0, "Marauder", 8, False),
+            Unit(40, 40, 40, 0, 10, 1, 0, "Catapult", 8, False),
             Unit(40, 40, 0, 25, 4, 2, 0, "Archmage", 8, True),
             Unit(30, 30, 0, 20, 4, 2, 0, "Mystic", 8, True)
         ]

@@ -79,9 +79,9 @@ class Unit:
             charType = 8
         elif(self._type == "Executioner"):
             charType = 9
-        elif(self._type == "Gambler"):
+        elif(self._type == "Marauder"):
             charType = 10
-        elif(self._type == "Ballista"):
+        elif(self._type == "Catapult"):
             charType = 11
         elif(self._type == "Archmage"):
             charType = 12

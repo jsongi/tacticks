@@ -11,15 +11,15 @@ assets = [
     "assets/mountaintile.png", # 2
     "assets/attackhighlight.png", # 3
     "assets/knight.png", #knight 4
-    "assets/tempgrasstile.png", #thief 5
+    "assets/thief.png", #thief 5
     "assets/archer.png", # 6
     "assets/wizard.png", # 7
     "assets/healer.png", # 8
-    "assets/tempgrasstile.png", #executioner 9
-    "assets/tempgrasstile.png", #gambler 10
-    "assets/tempgrasstile.png", #ballista / trebuchet 11
-    "assets/tempgrasstile.png", #archmage 12
-    "assets/tempgrasstile.png", #mystic 13
+    "assets/executioner.png", #executioner 9
+    "assets/marauder.png", #marauder 10
+    "assets/catapult.png", #catapult 11
+    "assets/archmage.png", #archmage 12
+    "assets/mystic.png", #mystic 13
     "assets/bug1.png", # 14
     "assets/bug2.png", # 15
     "assets/tempgrasstile.png", # enemy type, 16
@@ -36,14 +36,9 @@ levels = [["aaa", "aab", "aac", "aad", "aae"],
           ["aba", "abb", "abc", "abd", "abe"],
           ]
 #id has to start from 4
-unit1 = Unit(40, 40, 999, 0, 8, 2, 4, "Knight", 4, False)
-unit2 = Unit(40, 40, 999, 0, 8, 2, 5, "Knight", 4, False)
-
-unit4 = Unit(40, 40, 999, 0, 8, 2, 6, "Knight", 4, False)
-
-unit3 = Unit(40, 40, 999, 0, 8, 2, 7, "Knight", 4, False)
+unit1 = Unit(40, 40, 5, 0, 8, 2, 4, "Knight", 4, False)
 patrons = []
-chars = [unit1, unit2, unit3, unit4] # , unit2, unit3, unit4 
+chars = [unit1] # , unit2, unit3, unit4 
 char_moves = []
 turn_counter = 5
 level = "aaa"
@@ -55,7 +50,7 @@ is_player_turn = True
 last_clicked = -1
 round = 1
 result = 1
-gold = 999 #set as this for testing, lower to 5(?) later
+gold = 9999 #set as this for testing, lower to 5(?) later
 game_state = "shop"
 enemies_remaining = 1
 
