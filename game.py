@@ -30,7 +30,9 @@ assets = [
     "assets/tempgrasstile.png", # enemy type, 21
     "assets/tempgrasstile.png", # enemy type, 22
     "assets/plaguedoctor.png", # , 23
-    "assets/jackofalltrades.png" # , 24
+    "assets/jackofalltrades.png", # , 24
+    "assets/clergyman.png", # 25
+    "assets/librarian.png" # 26
 ]
 levels = [["aaa", "aab", "aac", "aad", "aae"]
           

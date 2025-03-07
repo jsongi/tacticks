@@ -27,10 +27,10 @@ class Shop:
         ]
 
         self._patrons = [
-            Patron(23, 3, 20, 6, "Plague Doctor"),
-            Patron(24, 4, 14, 4, "Jack"),
-            Patron(23, 3, 20, 4, "Placeholder"),
-            Patron(23, 3, 20, 4, "Placeholder"),
+            Patron(23, 3, 20, 8, "Plague Doctor"),
+            Patron(24, 4, 14, 6, "Jack"),
+            Patron(25, 1, 1, 4, "Clergyman"),
+            Patron(26, 1, 2, 4, "Librarian"),
             Patron(23, 3, 20, 4, "Placeholder"),
             Patron(23, 3, 20, 4, "Placeholder"),
             Patron(23, 3, 20, 4, "Placeholder")

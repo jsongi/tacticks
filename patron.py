@@ -30,9 +30,13 @@ class Patron:
     # Handles effects
     def activateEffect(self, chars, enemies):
         match self._effectIndex:
-            case 1:
+            case 1: # Clergyman
+                for char in chars:
+                    char.addTotalHealth(5)
                 return
             case 2:
+                for char in chars:
+                    char.addMagic(1)
                 return
             case 3:
                 return
