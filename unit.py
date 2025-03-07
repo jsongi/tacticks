@@ -92,7 +92,34 @@ class Unit:
             charType = 13
 
         return charType
-    
+
+    def handle_attack(self, enemies, patrons, boardState, enemy_pos):
+        
+        enemy_x_pos, enemy_y_pos = enemy_pos
+
+        for e in enemies:
+            if e[0] == (enemy_x_pos, enemy_y_pos):
+                enemy = e
+
+        for patron in patrons:
+            if (patron.getEffectType() == 2):
+                patron.activateEffect(self, enemies, enemy)
+        
+        if self.magicUser():
+            enemy[1].update_health(self.magic())
+        else:
+            enemy[1].update_health(self.attack())
+        #TODO: Checks for targeted enemies vs multiple enemies, checks for patron effects on attack, use different ones depending on unit type + patrons
+        for e in enemies:
+            enemy_x_pos, enemy_y_pos = e[0]
+            print(e[1].health())
+            if e[1].health() <= 0:
+                boardState[enemy_x_pos][enemy_y_pos] = 0
+                # Modifies the list of enemies in place to remove the targeted enemy
+                enemies[:] = [entry for entry in enemies if entry[0] != (enemy_x_pos, enemy_y_pos)] 
+
+        return
+
     def update_health(self, value: int) -> None:
         self._health = self._health - value
     

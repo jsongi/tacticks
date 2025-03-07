@@ -10,16 +10,16 @@ assets = [
     "assets/movementhighlight.png", # 1
     "assets/mountaintile.png", # 2
     "assets/attackhighlight.png", # 3
-    "assets/knight.png", #knight 4
-    "assets/thief.png", #thief 5
+    "assets/knight.png", # 4
+    "assets/thief.png", # 5
     "assets/archer.png", # 6
     "assets/wizard.png", # 7
     "assets/healer.png", # 8
-    "assets/executioner.png", #executioner 9
-    "assets/marauder.png", #marauder 10
-    "assets/catapult.png", #catapult 11
-    "assets/archmage.png", #archmage 12
-    "assets/mystic.png", #mystic 13
+    "assets/executioner.png", # 9
+    "assets/marauder.png", # 10
+    "assets/catapult.png", # 11
+    "assets/archmage.png", # 12
+    "assets/mystic.png", # 13
     "assets/bug1.png", # 14
     "assets/bug2.png", # 15
     "assets/tempgrasstile.png", # enemy type, 16
@@ -32,14 +32,15 @@ assets = [
     "assets/plaguedoctor.png", # , 23
     "assets/jackofalltrades.png", # , 24
     "assets/clergyman.png", # 25
-    "assets/librarian.png" # 26
+    "assets/librarian.png", # 26
+    "assets/temptreetile.png" # 27
 ]
 levels = [["aaa", "aab", "aac", "aad", "aae"]
           
           ]
 #["aba", "abb", "abc", "abd", "abe"],
 #id has to start from 4
-unit1 = Unit(40, 40, 5, 0, 8, 2, 4, "Knight", 4, False)
+unit1 = Unit(40, 40, 5, 0, 1, 2, 4, "Knight", 4, False)
 patrons = []
 chars = [unit1] # , unit2, unit3, unit4 
 char_moves = []
@@ -92,7 +93,6 @@ while running:
                 running = False
 
         if game_state == "shop":
-            #do shop stuff
             if event.type == pygame.MOUSEBUTTONDOWN:  # Detect mouse click
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 click_status = shop.check_click(mouse_x, mouse_y)
@@ -113,7 +113,6 @@ while running:
                         selected_levels.append(levels[level_counter][-1])
                         
                         current_level = 0
-                        #print(selected_levels)
 
                     level = selected_levels[current_level]
 
@@ -144,7 +143,7 @@ while running:
                         player_actions += 1 # Attacking action
                         char_moves.append(last_clicked) # The character that was last clicked performed an action
                         boardState = ["default", 0]
-                        enemies_remaining = board.execute_attack(last_clicked, click_status[0], chars)
+                        enemies_remaining = board.execute_attack(last_clicked, click_status[0], chars, patrons)
                         if player_actions == len(chars):
                             is_player_turn = False
                             player_actions = 0
@@ -175,5 +174,9 @@ while running:
 
                 shop.refresh_items(chars)
                 screen.fill((255, 255, 255))
+
+            if(len(chars) == 0):
+                # TODO: Lose conditional
+                running = False
             
         pygame.display.flip()  

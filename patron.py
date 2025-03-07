@@ -27,34 +27,40 @@ class Patron:
     def setPurchased(self, status):
         self._purchased = status    
 
-    # Handles effects
-    def activateEffect(self, chars, enemies):
+    # Handles effects, chars will either be the list of characters or the character attacking an enemy
+    def activateEffect(self, chars, enemies, enemy):
         match self._effectIndex:
             case 1: # Clergyman
                 for char in chars:
                     char.addTotalHealth(5)
                 return
-            case 2:
+            case 2: # Librarian
                 for char in chars:
                     char.addMagic(1)
                 return
-            case 3:
+            case 3: # Conqueror
                 return
-            case 4:
+            case 4: # Physician
+                for char in chars:
+                    char.addHealth(15)
                 return
-            case 5:
+            case 5: # Merchant
+                return 
+            case 6: # Armorer
+                for char in chars:
+                    char.addTotalHealth(40)
                 return
-            case 6:
+            case 7: # Weapon-smith
+                for char in chars:
+                    char.addAttack(8)
                 return
-            case 7:
+            case 8: # Magician
                 return
-            case 8:
+            case 9: # Generalist
                 return
-            case 9:
+            case 10: # Cobbler (?)
                 return
-            case 10:
-                return
-            case 11:
+            case 11: 
                 return
             case 12:
                 return
@@ -66,7 +72,15 @@ class Patron:
                     char.addAttack(8)
                     char.addMagic(8)
                 return
-            case 15:
+            case 15: # Conquistador
+                for char in chars:
+                    char.addRange(1)
+                return
+            case 16: # Duelist
+                if chars.range() == 1: # Singular character should be passed here
+                    enemy[1].update_health(15) # Tentative way we're doing flat buffs
+                return
+            case 17:
                 return
             
     def handleSold(self, chars):

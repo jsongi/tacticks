@@ -33,7 +33,7 @@ class Shop:
             Patron(26, 1, 2, 4, "Librarian"),
             Patron(23, 3, 20, 4, "Placeholder"),
             Patron(23, 3, 20, 4, "Placeholder"),
-            Patron(23, 3, 20, 4, "Placeholder")
+            Patron(23, 2, 16, 6, "Duelist")
         ]
 
         self._units = [
@@ -191,7 +191,7 @@ class Shop:
             clicked_asset.setPurchased(True)
             patrons.append(clicked_asset)
             if clicked_asset.getEffectType() == 4:
-                clicked_asset.activateEffect(chars, None)
+                clicked_asset.activateEffect(chars, None, None)
             self.displayed_patrons[self.displayed_patrons.index(clicked_asset)] = None
             return gold, result
         elif clicked_asset in self._units and gold >= clicked_asset.getCost() and len(chars) < 6:
