@@ -32,9 +32,10 @@ assets = [
     "assets/plaguedoctor.png", # , 23
     "assets/jackofalltrades.png" # , 24
 ]
-levels = [["aaa", "aab", "aac", "aad", "aae"], 
-          ["aba", "abb", "abc", "abd", "abe"],
+levels = [["aaa", "aab", "aac", "aad", "aae"]
+          
           ]
+#["aba", "abb", "abc", "abd", "abe"],
 #id has to start from 4
 unit1 = Unit(40, 40, 5, 0, 8, 2, 4, "Knight", 4, False)
 patrons = []
@@ -61,9 +62,9 @@ pygame.init()
 screen_info = pygame.display.Info()
 width, height = screen_info.current_w, screen_info.current_h
 
-# Set the window size to be 80% of the screen width and height
-window_width = int(width * 0.8)
-window_height = int(height * 0.8)
+# Set the window size to be the screen width and height
+window_width = int(width * 1)
+window_height = int(height * 1)
 screen = pygame.display.set_mode((window_width, window_height))
 pygame.display.set_caption("Tacticks")
 
@@ -71,7 +72,7 @@ pygame.display.set_caption("Tacticks")
 cell_width = 31
 cell_height = 31
 
-shop = Shop(assets)
+shop = Shop(assets, chars)
 board = Board(assets)
 
 boardState = ["default", 0]
@@ -82,7 +83,12 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        
+
+        # TODO: Escape menu for options + information
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                running = False
+
         if game_state == "shop":
             #do shop stuff
             if event.type == pygame.MOUSEBUTTONDOWN:  # Detect mouse click
@@ -112,6 +118,7 @@ while running:
                     game_state = "battle"
                     board.read_board(level, chars, round)
                     screen.fill((255, 255, 255))
+                    round = 1
                     result = 1
             else:
                 shop.display(screen, gold)
@@ -131,7 +138,7 @@ while running:
                         if player_actions == len(chars):
                             is_player_turn = False
                             player_actions = 0
-                    elif boardState[0] == "charSelected" and click_status[1] == 9: # Previous click was selecting a friendly unit and current click is an enemy tile
+                    elif boardState[0] == "charSelected" and click_status[1] == 10: # Previous click was selecting a friendly unit and current click is an enemy tile
                         player_actions += 1 # Attacking action
                         char_moves.append(last_clicked) # The character that was last clicked performed an action
                         boardState = ["default", 0]
@@ -164,7 +171,7 @@ while running:
                 is_player_turn = True
                 player_actions = 0
 
-                shop.refresh_items()
+                shop.refresh_items(chars)
                 screen.fill((255, 255, 255))
             
         pygame.display.flip()  

@@ -13,7 +13,7 @@ cell_width = 32
 cell_height = 32
 
 class Shop:
-    def __init__(self, assets):
+    def __init__(self, assets, chars):
         self._images = []  # Dictionary containing item categories
         self.reroll_cost = 5  # Cost for rerolling the shop
         self.unit_id = 0
@@ -67,15 +67,17 @@ class Shop:
         for image in assets:
             self._images.append(pygame.image.load(image)) 
          
-        self.refresh_items()  # Selects items to be displayed
+        self.refresh_items(chars)  # Selects items to be displayed
 
-    def refresh_items(self):
+    def refresh_items(self, chars):
         """ Selects a random subset while filtering out bought items. """
 
         # TODO: Should be weighted differently by rarity
         self.displayed_patrons = random.sample(
             [p for p in self._patrons if p not in self._owned_patrons and not p.getPurchased()], 3
         )
+
+        # Displayed units take owned units into account when generating what can show up
         self.displayed_units = random.sample(
             [u for u in self._units], 2
         )
@@ -168,9 +170,7 @@ class Shop:
             return "continue"
 
         return None
-
-    def apply_upgrades(self, char, upgrade):
-        return
+        
 
     def handle_click(self, gold, clicked_asset, patrons, chars):
         """ Handles purchases and rerolling. """
@@ -181,7 +181,7 @@ class Shop:
         if clicked_asset == "reroll" and gold >= self.reroll_cost:
             gold -= self.reroll_cost
             self.reroll_cost += 2
-            self.refresh_items()
+            self.refresh_items(chars)
             return gold, result
         elif clicked_asset == "continue":
             result = 0
@@ -203,9 +203,8 @@ class Shop:
             return gold, result
         elif clicked_asset in self._upgrades and gold >= clicked_asset.getCost():
             gold -= clicked_asset.getCost()
-            for char in chars:
-                self.apply_upgrades(char, clicked_asset)
-            self.displayed_patrons[self.displayed_patrons.index(clicked_asset)] = None
+            clicked_asset.activateEffect(chars)
+            self.displayed_upgrades[self.displayed_upgrades.index(clicked_asset)] = None
             return gold, result
         else:
             return gold, result

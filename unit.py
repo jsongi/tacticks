@@ -61,6 +61,9 @@ class Unit:
     def getCost(self) -> int:
         return self._cost
 
+    def magicUser(self) -> bool:
+        return self._magic_user
+
     def type(self):
         return self._type
 

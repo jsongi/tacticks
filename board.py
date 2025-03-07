@@ -44,7 +44,7 @@ class Board:
             if (any(tup == (boardxpos, boardypos) for tup, obj in self.enemy_positions)):
                 if ((boardxpos, boardypos) in self.enemy_positions_highlighted): # Valid attack action
                     self.clear_highlights()
-                    return [(boardxpos, boardypos), 9] # just using 9 as a signifier for now(?)
+                    return [(boardxpos, boardypos), 10] # just using 10 as a signifier for now(?)
                 else:
                     self.clear_highlights()
                     return [(boardxpos, boardypos), 0] # basically a dead click
@@ -154,7 +154,10 @@ class Board:
             if e[0] == (enemy_x_pos, enemy_y_pos):
                 enemy = e
 
-        enemy[1].update_health(c.attack())
+        if c.magicUser():
+            enemy[1].update_health(c.magic())
+        else:
+            enemy[1].update_health(c.attack())    
 
         if enemy[1].health() <= 0:
             self.boardState[enemy_x_pos][enemy_y_pos] = 0
