@@ -11,7 +11,7 @@ class Patron:
     def getImage(self):
         return self._imageNum
     
-    # Beginning of round (1), on attack (2), after turn (3), during shop (4), during round (5)
+    # Beginning of round (1), on attack (2), after turn (3), during shop (4), during round (5), flat buff (6)
     def getEffectType(self):
         return self._effectType
 
@@ -28,7 +28,7 @@ class Patron:
         self._purchased = status    
 
     # Handles effects, chars will either be the list of characters or the character attacking an enemy
-    def activateEffect(self, chars, enemies, enemy):
+    def activateEffect(self, chars, enemies, enemy, gold):
         match self._effectIndex:
             case 1: # Clergyman
                 for char in chars:
@@ -50,7 +50,7 @@ class Patron:
                 for char in chars:
                     char.addTotalHealth(40)
                 return
-            case 7: # Weapon-smith
+            case 7: # Weaponsmith
                 for char in chars:
                     char.addAttack(8)
                 return

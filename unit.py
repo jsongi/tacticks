@@ -112,7 +112,6 @@ class Unit:
         #TODO: Checks for targeted enemies vs multiple enemies, checks for patron effects on attack, use different ones depending on unit type + patrons
         for e in enemies:
             enemy_x_pos, enemy_y_pos = e[0]
-            print(e[1].health())
             if e[1].health() <= 0:
                 boardState[enemy_x_pos][enemy_y_pos] = 0
                 # Modifies the list of enemies in place to remove the targeted enemy

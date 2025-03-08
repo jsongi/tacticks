@@ -273,10 +273,10 @@ class Board:
 
         return 0  # No valid move found, stay in place
 
-    def activate_patrons(self, chars, patrons):
+    def activate_patrons(self, chars, patrons, gold):
         for patron in patrons:
             if patron.getEffectType() == 3:
-                patron.activateEffect(chars, self.enemy_positions, None)
+                patron.activateEffect(chars, self.enemy_positions, None, gold)
 
     def display(self, screen, displayType, chars, patrons):
         
@@ -341,8 +341,6 @@ class Board:
         # Draw character stats
         x = 0
         y = 300
-
-        
 
         for char in chars:
             screen.blit(self.images[char.typeImage()], (x, y))

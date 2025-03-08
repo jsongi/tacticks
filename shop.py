@@ -30,10 +30,17 @@ class Shop:
             Patron(23, 3, 20, 8, "Plague Doctor"),
             Patron(24, 4, 14, 6, "Jack"),
             Patron(25, 1, 1, 4, "Clergyman"),
-            Patron(26, 1, 2, 4, "Librarian"),
-            Patron(23, 3, 20, 4, "Placeholder"),
-            Patron(23, 3, 20, 4, "Placeholder"),
-            Patron(23, 2, 16, 6, "Duelist")
+            Patron(27, 1, 2, 4, "Librarian"),
+            Patron(27, 1, 3, 4, "Conqueror"),
+            Patron(27, 1, 4, 4, "Physician"),
+            Patron(27, 4, 5, 4, "Merchant"),
+            Patron(27, 6, 6, 4, "Armorer"),
+            Patron(27, 6, 7, 4, "Weaponsmith"),
+            Patron(27, 6, 4, 4, "Enchanter"),
+            Patron(27, 6, 8, 4, "Generalist"),
+            Patron(27, 6, 9, 4, "Cobbler"),
+            Patron(27, 4, 10, 4, "Peddler"),
+            Patron(27, 2, 16, 6, "Duelist")
         ]
 
         self._units = [
@@ -190,8 +197,8 @@ class Shop:
             gold -= clicked_asset.getCost()
             clicked_asset.setPurchased(True)
             patrons.append(clicked_asset)
-            if clicked_asset.getEffectType() == 4:
-                clicked_asset.activateEffect(chars, None, None)
+            if clicked_asset.getEffectType() == 4 or clicked_asset.getEffectType() == 6:
+                clicked_asset.activateEffect(chars, None, None, gold)
             self.displayed_patrons[self.displayed_patrons.index(clicked_asset)] = None
             return gold, result
         elif clicked_asset in self._units and gold >= clicked_asset.getCost() and len(chars) < 6:
@@ -199,6 +206,9 @@ class Shop:
             # TODO: Calculate new id for unit in board display when characters are sold and new ones are bought
             clicked_asset.setId(len(chars) + 4)
             chars.append(copy.copy(clicked_asset))
+            for patron in patrons:
+                if patron.getEffectType() == 6:
+                    patron.activateEffects(chars, None, None, gold)
             self.displayed_units[self.displayed_units.index(clicked_asset)] = None
             return gold, result
         elif clicked_asset in self._upgrades and gold >= clicked_asset.getCost():

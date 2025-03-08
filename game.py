@@ -154,7 +154,7 @@ while running:
                         boardState = ["default", 0]
             else:
                 #Player turn has finished, can apply end of turn effects here
-                board.activate_patrons(chars, patrons)
+                board.activate_patrons(chars, patrons, gold)
 
                 board.move_enemies(chars)
                 is_player_turn = True
