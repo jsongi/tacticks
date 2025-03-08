@@ -1,11 +1,12 @@
 class Patron:
 
-    def __init__(self, imageNum, effectType, effectIndex, cost, name):
+    def __init__(self, imageNum, effectType, effectIndex, cost, name, rarity):
         self._imageNum = imageNum
         self._effectType = effectType
         self._effectIndex = effectIndex
         self._cost = cost
         self._name = name
+        self._rarity = rarity
         self._purchased = False
 
     def getImage(self):
@@ -20,6 +21,9 @@ class Patron:
 
     def getName(self):
         return self._name
+
+    def getRarity(self):
+        return self._rarity
 
     def getPurchased(self):
         return self._purchased
@@ -81,6 +85,20 @@ class Patron:
                     enemy[1].update_health(15) # Tentative way we're doing flat buffs
                 return
             case 17:
+                return
+            case 18:
+                return
+            case 19:
+                return
+            case 20:
+                return
+            case 21:
+                return
+            case 22:
+                return
+            case 23:
+                return
+            case 24:
                 return
             
     def handleSold(self, chars):

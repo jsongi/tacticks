@@ -27,20 +27,20 @@ class Shop:
         ]
 
         self._patrons = [
-            Patron(23, 3, 20, 8, "Plague Doctor"),
-            Patron(24, 4, 14, 6, "Jack"),
-            Patron(25, 1, 1, 4, "Clergyman"),
-            Patron(27, 1, 2, 4, "Librarian"),
-            Patron(27, 1, 3, 4, "Conqueror"),
-            Patron(27, 1, 4, 4, "Physician"),
-            Patron(27, 4, 5, 4, "Merchant"),
-            Patron(27, 6, 6, 4, "Armorer"),
-            Patron(27, 6, 7, 4, "Weaponsmith"),
-            Patron(27, 6, 4, 4, "Enchanter"),
-            Patron(27, 6, 8, 4, "Generalist"),
-            Patron(27, 6, 9, 4, "Cobbler"),
-            Patron(27, 4, 10, 4, "Peddler"),
-            Patron(27, 2, 16, 6, "Duelist")
+            Patron(25, 1, 1, 4, "Clergyman", 0),
+            Patron(26, 1, 2, 4, "Librarian", 0),
+            Patron(27, 1, 3, 4, "Conqueror", 0),
+            Patron(27, 1, 4, 4, "Physician", 0),
+            Patron(27, 4, 5, 4, "Merchant", 0),
+            Patron(27, 6, 6, 4, "Armorer", 0),
+            Patron(27, 6, 7, 4, "Weaponsmith", 0),
+            Patron(27, 6, 4, 4, "Enchanter", 0),
+            Patron(27, 6, 8, 4, "Generalist", 0),
+            Patron(27, 6, 9, 4, "Cobbler", 0),
+            Patron(27, 4, 10, 4, "Peddler", 0),
+            Patron(24, 4, 14, 6, "Jack", 1),
+            Patron(27, 2, 16, 6, "Duelist", 1),
+            Patron(23, 3, 24, 8, "Plague Doctor", 3)
         ]
 
         self._units = [
@@ -77,12 +77,25 @@ class Shop:
         self.refresh_items(chars)  # Selects items to be displayed
 
     def refresh_items(self, chars):
-        """ Selects a random subset while filtering out bought items. """
+        rarity_weights = {0: 75, 1: 20, 2: 4, 3: 1}
 
-        # TODO: Should be weighted differently by rarity
-        self.displayed_patrons = random.sample(
-            [p for p in self._patrons if p not in self._owned_patrons and not p.getPurchased()], 3
-        )
+        # Filter available patrons
+        available_patrons = [p for p in self._patrons if p not in self._owned_patrons and not p.getPurchased()]
+
+        num_to_select = 3
+
+        selected_patrons = []
+        while len(selected_patrons) < num_to_select:
+            patron = random.choices(
+                available_patrons,
+                weights=[rarity_weights.get(p.getRarity(), 0) for p in available_patrons],
+                k=1
+            )[0]  # Pick one patron at a time
+
+            if patron not in selected_patrons:  # Ensure no duplicates
+                selected_patrons.append(patron)
+
+        self.displayed_patrons = selected_patrons
 
         # Displayed units take owned units into account when generating what can show up
         self.displayed_units = random.sample(
@@ -193,7 +206,7 @@ class Shop:
         elif clicked_asset == "continue":
             result = 0
             return gold, result  # Return updated gold amount
-        elif clicked_asset in self._patrons and gold >= clicked_asset.getCost():
+        elif clicked_asset in self._patrons and gold >= clicked_asset.getCost() and len(patrons) < 5:
             gold -= clicked_asset.getCost()
             clicked_asset.setPurchased(True)
             patrons.append(clicked_asset)

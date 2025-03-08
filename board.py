@@ -132,7 +132,7 @@ class Board:
             if tile_value in self.enemyTypes: # Attack enemy check
                 self.enemy_positions_highlighted.append((row, col))
 
-    def execute_attack(self, char_pos, enemy_pos, chars, patrons):
+    def execute_attack(self, char_pos, enemy_pos, chars, patrons, gold):
         #TODO: Check range, if melee move into melee range, if ranged then we don't care because only valid highlights should've been calculated
         #Execute attack onto the target enemy, reduce their hp by the characters attack, apply any additional effects onto them from other characters
         
@@ -149,7 +149,7 @@ class Board:
                 char = c
                 break        
 
-        c.handle_attack(self.enemy_positions, patrons, self.boardState, enemy_pos)   
+        c.handle_attack(self.enemy_positions, patrons, self.boardState, enemy_pos, gold)   
 
         return len(self.enemy_positions)
 
@@ -276,6 +276,8 @@ class Board:
     def activate_patrons(self, chars, patrons, gold):
         for patron in patrons:
             if patron.getEffectType() == 3:
+                patron.activateEffect(chars, self.enemy_positions, None, gold)
+            elif patron.getEffectType() == 1:
                 patron.activateEffect(chars, self.enemy_positions, None, gold)
 
     def display(self, screen, displayType, chars, patrons):

@@ -93,7 +93,7 @@ class Unit:
 
         return charType
 
-    def handle_attack(self, enemies, patrons, boardState, enemy_pos):
+    def handle_attack(self, enemies, patrons, boardState, enemy_pos, gold):
         
         enemy_x_pos, enemy_y_pos = enemy_pos
 
@@ -103,7 +103,7 @@ class Unit:
 
         for patron in patrons:
             if (patron.getEffectType() == 2):
-                patron.activateEffect(self, enemies, enemy)
+                patron.activateEffect(self, enemies, enemy, gold)
         
         if self.magicUser():
             enemy[1].update_health(self.magic())

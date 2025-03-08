@@ -118,6 +118,8 @@ while running:
 
                     game_state = "battle"
                     board.read_board(level, chars, round)
+
+                    board.activate_patrons(chars, patrons, gold)
                     screen.fill((255, 255, 255))
                     round = 1
                     result = 1
@@ -143,7 +145,7 @@ while running:
                         player_actions += 1 # Attacking action
                         char_moves.append(last_clicked) # The character that was last clicked performed an action
                         boardState = ["default", 0]
-                        enemies_remaining = board.execute_attack(last_clicked, click_status[0], chars, patrons)
+                        enemies_remaining = board.execute_attack(last_clicked, click_status[0], chars, patrons, gold)
                         if player_actions == len(chars):
                             is_player_turn = False
                             player_actions = 0
