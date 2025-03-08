@@ -21,10 +21,6 @@ class Shop:
         self._owned_patrons = [
 
         ]
-        
-        self._owned_units = [
-            Unit(40, 40, 3, 0, 1, 2, 4, "Knight", 4, False),
-        ]
 
         self._patrons = [
             Patron(25, 1, 1, 4, "Clergyman", 0),
@@ -62,11 +58,6 @@ class Shop:
             Upgrade(22, 1, 3, 4, "Flat Attack")
         ]
 
-        # Mark all items as not purchased initially
-        #for category in self._assets.values():
-        #    for item in category:
-        #        item["bought"] = False
-
         self.displayed_patrons = []
         self.displayed_units = []
         self.displayed_upgrades = []
@@ -97,11 +88,48 @@ class Shop:
 
         self.displayed_patrons = selected_patrons
 
-        # Displayed units take owned units into account when generating what can show up
-        self.displayed_units = random.sample(
-            [u for u in self._units], 2
-        )
-        # Potentially make this not rerollable
+        # Define unit unlock conditions
+        unit_requirements = {
+            "Executioner": ("Knight", 3),
+            "Marauder": ("Thief", 3),
+            "Catapult": ("Archer", 3),
+            "Archmage": ("Wizard", 3),
+            "Mystic": ("Healer", 3),
+        }
+
+        # Count how many of each unit type are owned
+        owned_unit_counts = {unit.type(): 0 for unit in self._units}  # Initialize all counts to 0
+        for unit in chars:
+            owned_unit_counts[unit.type()] += 1
+            
+        # Separate restricted and common units
+        common_units = []
+        restricted_units = []
+
+        for unit in self._units:
+            if unit.type() in unit_requirements:
+                required_unit, required_count = unit_requirements[unit.type()]
+                if owned_unit_counts.get(required_unit, 0) >= required_count:
+                    restricted_units.append(unit)  # Add if requirement met
+            else:
+                common_units.append(unit)
+
+        # Determine available units for selection
+        available_units = common_units[:]  # Start with all common units
+
+        num_to_select = 2
+
+        # Decide how many restricted units to include
+        if restricted_units and random.random() < 0.20:  # 20% chance to select from restricted pool
+            # Pick 1 from restricted and 1 from common
+            selected_units = random.sample(restricted_units, k=1) + random.sample(common_units, k=1)
+        else:
+            # Pick only from common units
+            selected_units = random.sample(common_units, k=num_to_select)
+
+        # Randomly sample from the adjusted pool
+        self.displayed_units = selected_units
+
         self.displayed_upgrades = random.sample(
             [u for u in self._upgrades], 2
         )
