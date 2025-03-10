@@ -40,7 +40,7 @@ levels = [["aaa", "aab", "aac", "aad", "aae"]
           ]
 #["aba", "abb", "abc", "abd", "abe"],
 #id has to start from 4
-unit1 = Unit(40, 40, 5, 0, 1, 2, 4, "Knight", 4, False)
+unit1 = Unit(40, 40, 5, 0, 1, 2, 4, "Knight", 4, False, "Basic melee unit (Requires 3 to buy Executioner)")
 patrons = []
 chars = [unit1] # , unit2, unit3, unit4 
 char_moves = []
@@ -93,6 +93,9 @@ while running:
                 running = False
 
         if game_state == "shop":
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            shop.check_hover(mouse_x, mouse_y)
+            
             if event.type == pygame.MOUSEBUTTONDOWN:  # Detect mouse click
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 click_status = shop.check_click(mouse_x, mouse_y)
@@ -119,7 +122,11 @@ while running:
                     game_state = "battle"
                     board.read_board(level, chars, round)
 
-                    board.activate_patrons(chars, patrons, gold)
+                    # Activate effects for beginning of round
+                    for patron in patrons:
+                        if patron.getEffectType() == 1:
+                            patron.activateEffect(chars, None, None, gold)
+                    
                     screen.fill((255, 255, 255))
                     round = 1
                     result = 1
@@ -174,6 +181,7 @@ while running:
                 is_player_turn = True
                 player_actions = 0
 
+                shop.activate_patrons(patrons)
                 shop.refresh_items(chars)
                 screen.fill((255, 255, 255))
 
