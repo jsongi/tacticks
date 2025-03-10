@@ -139,9 +139,7 @@ class Board:
         self.clear_highlights()
 
         char_x_pos, char_y_pos = char_pos
-        enemy_x_pos, enemy_y_pos = enemy_pos
         char = None
-        enemy = None
 
         char_id = self.boardState[char_x_pos][char_y_pos]
         for c in chars:
@@ -149,7 +147,7 @@ class Board:
                 char = c
                 break        
 
-        c.handle_attack(self.enemy_positions, patrons, self.boardState, enemy_pos, gold)   
+        char.handle_attack(self.enemy_positions, patrons, self.boardState, enemy_pos, gold)   
 
         return len(self.enemy_positions)
 
@@ -160,6 +158,7 @@ class Board:
 
         # Clear board state to read in fresh level
         self.boardState = []
+        self.char_positions = []
 
         with open("levels.txt", 'r') as file:
             
@@ -277,7 +276,7 @@ class Board:
         for patron in patrons:
             if patron.getEffectType() == 3:
                 patron.activateEffect(chars, self.enemy_positions, None, gold)
-            elif patron.getEffectType() == 1:
+            elif patron.getEffectType() == 2:
                 patron.activateEffect(chars, self.enemy_positions, None, gold)
 
     def display(self, screen, displayType, chars, patrons):

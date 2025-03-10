@@ -1,12 +1,13 @@
 class Patron:
 
-    def __init__(self, imageNum, effectType, effectIndex, cost, name, rarity):
+    def __init__(self, imageNum, effectType, effectIndex, cost, name, rarity, description):
         self._imageNum = imageNum
         self._effectType = effectType
         self._effectIndex = effectIndex
         self._cost = cost
         self._name = name
         self._rarity = rarity
+        self._description = description
         self._purchased = False
 
     def getImage(self):
@@ -27,6 +28,9 @@ class Patron:
 
     def getPurchased(self):
         return self._purchased
+    
+    def getDescription(self):
+        return self._description
 
     def setPurchased(self, status):
         self._purchased = status    
@@ -58,13 +62,13 @@ class Patron:
                 for char in chars:
                     char.addAttack(8)
                 return
-            case 8: # Magician
+            case 8: # Enchanter
                 return
             case 9: # Generalist
                 return
-            case 10: # Cobbler (?)
+            case 10: # Cobbler
                 return
-            case 11: 
+            case 11: # Peddler
                 return
             case 12:
                 return

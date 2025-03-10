@@ -23,33 +23,33 @@ class Shop:
         ]
 
         self._patrons = [
-            Patron(25, 1, 1, 4, "Clergyman", 0),
-            Patron(26, 1, 2, 4, "Librarian", 0),
-            Patron(27, 1, 3, 4, "Conqueror", 0),
-            Patron(27, 1, 4, 4, "Physician", 0),
-            Patron(27, 4, 5, 4, "Merchant", 0),
-            Patron(27, 6, 6, 4, "Armorer", 0),
-            Patron(27, 6, 7, 4, "Weaponsmith", 0),
-            Patron(27, 6, 4, 4, "Enchanter", 0),
-            Patron(27, 6, 8, 4, "Generalist", 0),
-            Patron(27, 6, 9, 4, "Cobbler", 0),
-            Patron(27, 4, 10, 4, "Peddler", 0),
-            Patron(24, 4, 14, 6, "Jack", 1),
-            Patron(27, 2, 16, 6, "Duelist", 1),
-            Patron(23, 3, 24, 8, "Plague Doctor", 3)
+            Patron(25, 1, 1, 4, "Clergyman", 0, "+5 total HP to all units at end of round"),
+            Patron(26, 1, 2, 4, "Librarian", 0, "+1 Magic Power to all units at end of round"),
+            Patron(27, 1, 3, 4, "Conqueror", 0, "+1 Attack to all units per 5 enemies killed"),
+            Patron(27, 1, 4, 4, "Physician", 0, "Heals 15 HP to all units at end of round"),
+            Patron(27, 4, 5, 4, "Merchant", 0, "+3 Gold at end of round"),
+            Patron(27, 6, 6, 4, "Armorer", 0, "+40 Total HP to all units"),
+            Patron(27, 6, 7, 4, "Weaponsmith", 0, "+8 Attack to all units"),
+            Patron(27, 6, 8, 4, "Enchanter", 0, "+8 Magic Power to all units"),
+            Patron(27, 6, 9, 4, "Generalist", 0, "+6 Attack and +6 Magic Power to all units"),
+            Patron(27, 6, 10, 4, "Cobbler", 0, "+2 movement to all units"),
+            Patron(27, 4, 11, 4, "Peddler", 0, "1 free reroll per shop"),
+            Patron(24, 4, 14, 6, "Jack", 1, "Flat boost to all stats"),
+            Patron(27, 2, 16, 6, "Duelist", 1, "Buffs units with 1 range"),
+            Patron(23, 3, 24, 8, "Plague Doctor", 3, "Enemies lose half their remaining HP each turn")
         ]
 
         self._units = [
-            Unit(40, 40, 3, 0, 1, 2, 0, "Knight", 4, False),
-            Unit(30, 30, 2, 0, 1, 4, 0, "Thief", 4, False),
-            Unit(25, 25, 4, 0, 3, 3, 0, "Archer", 4, False),
-            Unit(25, 25, 0, 6, 3, 2, 0, "Wizard", 4, True),
-            Unit(20, 20, 0, 3, 3, 3, 0, "Healer", 3, True),
-            Unit(70, 70, 15, 0, 1, 2, 0, "Executioner", 8, False),
-            Unit(50, 50, 10, 0, 1, 4, 0, "Marauder", 8, False),
-            Unit(40, 40, 40, 0, 10, 1, 0, "Catapult", 8, False),
-            Unit(40, 40, 0, 25, 4, 2, 0, "Archmage", 8, True),
-            Unit(30, 30, 0, 20, 4, 2, 0, "Mystic", 8, True)
+            Unit(40, 40, 3, 0, 1, 2, 0, "Knight", 4, False, "Basic melee unit (Requires 3 to buy Executioner) [40 HP, 3 ATTACK, 1 RANGE, 2 MOVEMENT]"),
+            Unit(30, 30, 2, 0, 1, 4, 0, "Thief", 4, False, "Basic melee unit, generates 1 gold at end of round (Requires 3 to buy Marauder) [30 HP, 2 ATTACK, 1 RANGE, 4 MOVEMENT]"),
+            Unit(25, 25, 4, 0, 3, 3, 0, "Archer", 4, False, "Basic ranged unit (Requires 3 to purchase Catapult) [25 HP, 4 ATTACK, 3 RANGE, 3 MOVEMENT]"),
+            Unit(20, 20, 0, 6, 3, 2, 0, "Wizard", 4, True, "Basic magic unit (Requires 3 to purchase Archmage) [20 HP, 6 MAGIC, 3 RANGE, 2 MOVEMENT]"),
+            Unit(20, 20, 0, 3, 3, 3, 0, "Healer", 3, True, "Basic magic unit, heals allies (Requires 3 to purchase Mystic) [20 HP, 3 MAGIC, 3 RANGE, 3 MOVEMENT]"),
+            Unit(70, 70, 15, 0, 1, 2, 0, "Executioner", 8, False, "Rare melee unit, executes enemies when an attack reduces them to below 10% HP"),
+            Unit(50, 50, 10, 0, 1, 4, 0, "Marauder", 8, False, "Rare melee unit"),
+            Unit(40, 40, 40, 0, 10, 1, 0, "Catapult", 8, False, "Rare ranged unit, can attack enemies anywhere on the map [40 HP, 40 ATTACK, 10 RANGE, 1 MOVEMENT]"),
+            Unit(40, 40, 0, 25, 4, 2, 0, "Archmage", 8, True, "Rare magic unit, deals 1/10 of damage to all other enemies"),
+            Unit(30, 30, 0, 20, 4, 2, 0, "Mystic", 8, True, "Rare magic unit, heals allies")
         ]
         # TODO: The images slots for this are temporary and need to be updated
         self._upgrades = [
@@ -61,15 +61,25 @@ class Shop:
         self.displayed_patrons = []
         self.displayed_units = []
         self.displayed_upgrades = []
+        self.hovered_item = None
+        self.free_reroll = False
 
         for image in assets:
             self._images.append(pygame.image.load(image)) 
          
         self.refresh_items(chars)  # Selects items to be displayed
 
+    def activate_patrons(self, patrons):
+        #this is jank if I want to add more later
+        for patron in patrons:
+            if(patron._effectIndex == 11):
+                self.free_reroll = True
+                self.reroll_cost = 0
+        return
+
     def refresh_items(self, chars):
         rarity_weights = {0: 75, 1: 20, 2: 4, 3: 1}
-
+        self.free_reroll = False
         # Filter available patrons
         available_patrons = [p for p in self._patrons if p not in self._owned_patrons and not p.getPurchased()]
 
@@ -134,6 +144,25 @@ class Shop:
             [u for u in self._upgrades], 2
         )
 
+    def check_hover(self, mouse_x, mouse_y):
+        """ Detects which item is being hovered over and stores it. """
+        self.hovered_item = None  # Reset hover
+
+        # Check patrons
+        y_offset = 150
+        for item in self.displayed_patrons:
+            if 300 <= mouse_x <= 500 and y_offset <= mouse_y <= y_offset + 50:
+                self.hovered_item = (item, True)
+                return
+            y_offset += 70
+
+        # Check units
+        y_offset = 200
+        for item in self.displayed_units:
+            if 550 <= mouse_x <= 750 and y_offset <= mouse_y <= y_offset + 50:
+                self.hovered_item = (item, False)
+                return
+            y_offset += 70
 
     def display(self, screen, gold):
         """ Draw shop items and reroll button. """
@@ -167,6 +196,19 @@ class Shop:
                 screen.blit(text_surface, (560, y_offset + 10))
                 screen.blit(self._images[item.typeImage()], (680, y_offset - 22))
             y_offset += 70
+
+        # Display description on the side
+        # TODO: make this better
+        
+        if self.hovered_item is not None and self.hovered_item[0] is not None:
+            if self.hovered_item[1]:
+                pygame.draw.rect(screen, (200, 200, 200), (50, 800, 600, 80))  # Background for text
+                desc_surface = font.render(self.hovered_item[0].getDescription(), True, (0, 0, 0))
+                screen.blit(desc_surface, (60, 820))
+            else:
+                pygame.draw.rect(screen, (200, 200, 200), (50, 800, 1000, 80))  # Background for text
+                desc_surface = font.render(self.hovered_item[0].getDescription(), True, (0, 0, 0))
+                screen.blit(desc_surface, (60, 820))
 
         # Reroll Button
         pygame.draw.rect(screen, (255, 100, 0), (210, 500, 100, 50))
@@ -227,8 +269,12 @@ class Shop:
         if clicked_asset == None:
             return gold, result
         if clicked_asset == "reroll" and gold >= self.reroll_cost:
-            gold -= self.reroll_cost
-            self.reroll_cost += 2
+            if self.free_reroll:
+                self.free_reroll = False
+                self.reroll_cost = 5
+            else:
+                gold -= self.reroll_cost
+                self.reroll_cost += 2
             self.refresh_items(chars)
             return gold, result
         elif clicked_asset == "continue":
