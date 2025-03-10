@@ -34,7 +34,7 @@ class Shop:
             Patron(27, 6, 9, 4, "Generalist", 0, "+6 Attack and +6 Magic Power to all units"),
             Patron(27, 6, 10, 4, "Cobbler", 0, "+2 movement to all units"),
             Patron(27, 4, 11, 4, "Peddler", 0, "1 free reroll per shop"),
-            Patron(24, 4, 14, 6, "Jack", 1, "Flat boost to all stats"),
+            Patron(24, 4, 14, 6, "Jack", 1, "Flat boost to all stats (+30 Total HP, +6 Attack, +6 Magic)"),
             Patron(27, 2, 16, 6, "Duelist", 1, "Buffs units with 1 range"),
             Patron(23, 3, 24, 8, "Plague Doctor", 3, "Enemies lose half their remaining HP each turn")
         ]
@@ -47,7 +47,7 @@ class Shop:
             Unit(20, 20, 0, 3, 3, 3, 0, "Healer", 3, True, "Basic magic unit, heals allies (Requires 3 to purchase Mystic) [20 HP, 3 MAGIC, 3 RANGE, 3 MOVEMENT]"),
             Unit(70, 70, 15, 0, 1, 2, 0, "Executioner", 8, False, "Rare melee unit, executes enemies when an attack reduces them to below 10% HP"),
             Unit(50, 50, 10, 0, 1, 4, 0, "Marauder", 8, False, "Rare melee unit"),
-            Unit(40, 40, 40, 0, 10, 1, 0, "Catapult", 8, False, "Rare ranged unit, can attack enemies anywhere on the map [40 HP, 40 ATTACK, 10 RANGE, 1 MOVEMENT]"),
+            Unit(40, 40, 40, 0, 10, 1, 0, "Catapult", 8, False, "Rare ranged unit, nearly global range [40 HP, 40 ATTACK, 10 RANGE, 1 MOVEMENT]"),
             Unit(40, 40, 0, 25, 4, 2, 0, "Archmage", 8, True, "Rare magic unit, deals 1/10 of damage to all other enemies"),
             Unit(30, 30, 0, 20, 4, 2, 0, "Mystic", 8, True, "Rare magic unit, heals allies")
         ]
@@ -69,17 +69,18 @@ class Shop:
          
         self.refresh_items(chars)  # Selects items to be displayed
 
-    def activate_patrons(self, patrons):
+    def activate_patrons(self, patrons, gold, chars):
         #this is jank if I want to add more later
         for patron in patrons:
             if(patron._effectIndex == 11):
                 self.free_reroll = True
                 self.reroll_cost = 0
+            elif(patron._effectIndex == 5):
+                gold[0] += 3
         return
 
     def refresh_items(self, chars):
         rarity_weights = {0: 75, 1: 20, 2: 4, 3: 1}
-        self.free_reroll = False
         # Filter available patrons
         available_patrons = [p for p in self._patrons if p not in self._owned_patrons and not p.getPurchased()]
 
@@ -222,7 +223,7 @@ class Shop:
 
         # Gold Value
         pygame.draw.rect(screen, (255, 215, 0), (350, 600, 100, 50))
-        gold_text = font.render(f"Gold: {gold}", True, (0, 0, 0))
+        gold_text = font.render(f"Gold: {gold[0]}", True, (0, 0, 0))
         screen.blit(gold_text, (360, 615))
 
         pygame.display.flip()
@@ -267,29 +268,29 @@ class Shop:
 
         result = 1
         if clicked_asset == None:
-            return gold, result
-        if clicked_asset == "reroll" and gold >= self.reroll_cost:
+            return result
+        if clicked_asset == "reroll" and gold[0] >= self.reroll_cost:
             if self.free_reroll:
                 self.free_reroll = False
                 self.reroll_cost = 5
             else:
-                gold -= self.reroll_cost
+                gold[0] -= self.reroll_cost
                 self.reroll_cost += 2
             self.refresh_items(chars)
-            return gold, result
+            return result
         elif clicked_asset == "continue":
             result = 0
-            return gold, result  # Return updated gold amount
-        elif clicked_asset in self._patrons and gold >= clicked_asset.getCost() and len(patrons) < 5:
-            gold -= clicked_asset.getCost()
+            return result  # Return updated gold amount
+        elif clicked_asset in self._patrons and gold[0] >= clicked_asset.getCost() and len(patrons) < 5:
+            gold[0] -= clicked_asset.getCost()
             clicked_asset.setPurchased(True)
             patrons.append(clicked_asset)
             if clicked_asset.getEffectType() == 4 or clicked_asset.getEffectType() == 6:
                 clicked_asset.activateEffect(chars, None, None, gold)
             self.displayed_patrons[self.displayed_patrons.index(clicked_asset)] = None
-            return gold, result
-        elif clicked_asset in self._units and gold >= clicked_asset.getCost() and len(chars) < 6:
-            gold -= clicked_asset.getCost()
+            return result
+        elif clicked_asset in self._units and gold[0] >= clicked_asset.getCost() and len(chars) < 6:
+            gold[0] -= clicked_asset.getCost()
             # TODO: Calculate new id for unit in board display when characters are sold and new ones are bought
             clicked_asset.setId(len(chars) + 4)
             chars.append(copy.copy(clicked_asset))
@@ -297,12 +298,12 @@ class Shop:
                 if patron.getEffectType() == 6:
                     patron.activateEffects(chars, None, None, gold)
             self.displayed_units[self.displayed_units.index(clicked_asset)] = None
-            return gold, result
-        elif clicked_asset in self._upgrades and gold >= clicked_asset.getCost():
-            gold -= clicked_asset.getCost()
+            return result
+        elif clicked_asset in self._upgrades and gold[0] >= clicked_asset.getCost():
+            gold[0] -= clicked_asset.getCost()
             clicked_asset.activateEffect(chars)
             self.displayed_upgrades[self.displayed_upgrades.index(clicked_asset)] = None
-            return gold, result
+            return result
         else:
-            return gold, result
+            return result
         

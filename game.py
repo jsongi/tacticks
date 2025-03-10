@@ -54,7 +54,7 @@ is_player_turn = True
 last_clicked = -1
 round = 1
 result = 1
-gold = 9999 #set as this for testing, lower to 5(?) later
+gold = [9999] #set as this for testing, lower to 5(?) later
 game_state = "shop"
 enemies_remaining = 1
 
@@ -100,7 +100,7 @@ while running:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 click_status = shop.check_click(mouse_x, mouse_y)
                 
-                gold, result = shop.handle_click(gold, click_status, patrons, chars)
+                result = shop.handle_click(gold, click_status, patrons, chars)
                 
             if result == 0:  
                     if current_level < 2:
@@ -121,11 +121,6 @@ while running:
 
                     game_state = "battle"
                     board.read_board(level, chars, round)
-
-                    # Activate effects for beginning of round
-                    for patron in patrons:
-                        if patron.getEffectType() == 1:
-                            patron.activateEffect(chars, None, None, gold)
                     
                     screen.fill((255, 255, 255))
                     round = 1
@@ -176,12 +171,18 @@ while running:
                 enemies_remaining = 1
                 game_state = "shop"
                 # Add interest gold here
-                gold += 3
+                gold[0] += 3
                 char_moves = []
                 is_player_turn = True
                 player_actions = 0
 
-                shop.activate_patrons(patrons)
+                # Activate effects for end of round
+                for patron in patrons:
+                    if patron.getEffectType() == 1:
+                        patron.activateEffect(chars, None, None, gold)
+
+                # Activate shop patron effects
+                shop.activate_patrons(patrons, gold, chars)
                 shop.refresh_items(chars)
                 screen.fill((255, 255, 255))
 
