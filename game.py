@@ -179,7 +179,7 @@ while running:
                 # Activate effects for end of round
                 for patron in patrons:
                     if patron.getEffectType() == 1:
-                        patron.activateEffect(chars, None, None, gold)
+                        patron.activateEffect(chars, None, None, gold, None)
 
                 # Activate shop patron effects
                 shop.activate_patrons(patrons, gold, chars)

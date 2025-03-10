@@ -275,9 +275,9 @@ class Board:
     def activate_patrons(self, chars, patrons, gold):
         for patron in patrons:
             if patron.getEffectType() == 3:
-                patron.activateEffect(chars, self.enemy_positions, None, gold)
+                patron.activateEffect(chars, self.enemy_positions, None, gold, self.boardState)
             elif patron.getEffectType() == 2:
-                patron.activateEffect(chars, self.enemy_positions, None, gold)
+                patron.activateEffect(chars, self.enemy_positions, None, gold, self.boardState)
 
     def display(self, screen, displayType, chars, patrons):
         

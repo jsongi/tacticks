@@ -286,7 +286,7 @@ class Shop:
             clicked_asset.setPurchased(True)
             patrons.append(clicked_asset)
             if clicked_asset.getEffectType() == 4 or clicked_asset.getEffectType() == 6:
-                clicked_asset.activateEffect(chars, None, None, gold)
+                clicked_asset.activateEffect(chars, None, None, gold, None)
             self.displayed_patrons[self.displayed_patrons.index(clicked_asset)] = None
             return result
         elif clicked_asset in self._units and gold[0] >= clicked_asset.getCost() and len(chars) < 6:
