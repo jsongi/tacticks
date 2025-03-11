@@ -20,11 +20,11 @@ assets = [
     "assets/catapult.png", # 11
     "assets/archmage.png", # 12
     "assets/mystic.png", # 13
-    "assets/bug1.png", # 14
-    "assets/bug2.png", # 15
-    "assets/tempgrasstile.png", # enemy type, 16
+    "assets/tick.png", # enemy type, 14
+    "assets/bug2.png", # enemy type, 15
+    "assets/mite.png", # enemy type, 16
     "assets/tempgrasstile.png", # enemy type, 17
-    "assets/tempgrasstile.png", # enemy type, 18
+    "assets/bombardierbeetle.png", # enemy type, 18
     "assets/tempgrasstile.png", # enemy type, 19
     "assets/tempgrasstile.png", # enemy type, 20
     "assets/tempgrasstile.png", # enemy type, 21
@@ -40,12 +40,12 @@ levels = [["aaa", "aab", "aac", "aad", "aae"]
           ]
 #["aba", "abb", "abc", "abd", "abe"],
 #id has to start from 4
-unit1 = Unit(40, 2, 5, 0, 1, 2, 4, "Knight", 4, False, "Basic melee unit (Requires 3 to buy Executioner)")
+unit1 = Unit(40, 40, 5, 0, 1, 2, 4, "Knight", 4, False, "Basic melee unit (Requires 3 to buy Executioner)")
 patrons = []
 chars = [unit1] # , unit2, unit3, unit4 
 char_moves = []
 turn_counter = 5
-level = "aaa"
+level = "aab"
 level_counter = -1
 current_level = 3
 selected_levels = []
