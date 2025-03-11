@@ -40,7 +40,7 @@ levels = [["aaa", "aab", "aac", "aad", "aae"]
           ]
 #["aba", "abb", "abc", "abd", "abe"],
 #id has to start from 4
-unit1 = Unit(40, 40, 5, 0, 1, 2, 4, "Knight", 4, False, "Basic melee unit (Requires 3 to buy Executioner)")
+unit1 = Unit(40, 2, 5, 0, 1, 2, 4, "Knight", 4, False, "Basic melee unit (Requires 3 to buy Executioner)")
 patrons = []
 chars = [unit1] # , unit2, unit3, unit4 
 char_moves = []
@@ -159,7 +159,17 @@ while running:
                 #Player turn has finished, can apply end of turn effects here
                 board.activate_patrons(chars, patrons, gold)
 
+                # Healing after player turn is finished and before enemy attacks
+                for char in chars:
+                    if char._type == "Healer":
+                        for c in chars:
+                            c.addHealth(int(char.magic()))
+                    elif char._type == "Mystic":
+                        for c in chars:
+                            c.addHealth(int(char.magic()))
+                            
                 board.move_enemies(chars)
+                        
                 is_player_turn = True
                 char_moves = []
             
@@ -170,7 +180,12 @@ while running:
                 enemies_remaining = 1
                 round += 1
                 game_state = "shop"
-                # Add interest gold here
+
+                if gold[0] >= 25:
+                    gold[0] += 5
+                else:
+                    gold[0] += gold[0] % 5
+                
                 gold[0] += 3
                 char_moves = []
                 is_player_turn = True
