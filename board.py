@@ -263,8 +263,10 @@ class Board:
                                 self.boardState[char_x_pos][char_y_pos] = 0
                                 chars.remove(c)
 
-            else: # Out of attack range, move as close as possible
+            else: # Out of attack range, move as close as possible    
                 new_pos = path[movement_range - 1] if len(path) >= movement_range else path[-1]
+                if new_pos in self.char_positions:
+                    new_pos = path[-1 - 1]
                 for i, (pos, enemy) in enumerate(self.enemy_positions): #this is not efficient
                     if pos == old_pos:
                         
