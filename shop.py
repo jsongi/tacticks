@@ -46,7 +46,7 @@ class Shop:
             Unit(30, 30, 2, 0, 1, 4, 0, "Thief", 4, False, "Basic melee unit, generates 1 gold at end of round (Requires 3 to buy Marauder) [30 HP, 2 ATTACK, 1 RANGE, 4 MOVEMENT]"),
             Unit(25, 25, 4, 0, 3, 3, 0, "Archer", 4, False, "Basic ranged unit (Requires 3 to purchase Catapult) [25 HP, 4 ATTACK, 3 RANGE, 3 MOVEMENT]"),
             Unit(20, 20, 0, 6, 3, 2, 0, "Wizard", 4, True, "Basic magic unit (Requires 3 to purchase Archmage) [20 HP, 6 MAGIC, 3 RANGE, 2 MOVEMENT]"),
-            Unit(20, 20, 0, 3, 3, 3, 0, "Healer", 3, True, "Basic magic unit, heals allies (Requires 3 to purchase Mystic) [20 HP, 3 MAGIC, 3 RANGE, 3 MOVEMENT]"),
+            Unit(20, 20, 0, 2, 3, 3, 0, "Healer", 3, True, "Basic magic unit, heals allies (Requires 3 to purchase Mystic) [20 HP, 3 MAGIC, 3 RANGE, 3 MOVEMENT]"),
             Unit(70, 70, 15, 0, 1, 2, 0, "Executioner", 8, False, "Rare melee unit, executes enemies when an attack reduces them to below 10% HP"),
             Unit(50, 50, 10, 0, 1, 4, 0, "Marauder", 8, False, "Rare melee unit"),
             Unit(40, 40, 40, 0, 10, 1, 0, "Catapult", 8, False, "Rare ranged unit, nearly global range [40 HP, 40 ATTACK, 10 RANGE, 1 MOVEMENT]"),
