@@ -123,7 +123,6 @@ while running:
                     board.read_board(level, chars, round)
                     
                     screen.fill((255, 255, 255))
-                    round = 1
                     result = 1
             else:
                 shop.display(screen, gold)
@@ -169,6 +168,7 @@ while running:
             # Handle end of round actions, switch to shop and get ready to load next level
             if(enemies_remaining == 0):
                 enemies_remaining = 1
+                round += 1
                 game_state = "shop"
                 # Add interest gold here
                 gold[0] += 3

@@ -241,6 +241,8 @@ class Board:
                             queue.append((new_row, new_col, path + [new_pos]))
             # We finished searching the movement range, move the enemy to new position calculated
 
+            enemy[1].handle_effects(chars, self.boardState, self.char_positions)
+
             #TODO: this is also ugly
             if len(path) - 1 <= attack_range: # Either do not move, and attack targeted character, or move into the targeted character and attack
                 if len(path) - 1 == attack_range and attack_range == 1: # melee units should move into range to attack

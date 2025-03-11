@@ -123,6 +123,9 @@ class Unit:
 
         return
 
+    def set_health(self, value: int) -> None:
+        self._health = value
+
     def update_health(self, value: int) -> None:
         self._health = self._health - value
     
