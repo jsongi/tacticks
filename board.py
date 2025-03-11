@@ -349,6 +349,8 @@ class Board:
         y = 300
 
         for char in chars:
+            if displayType[0] == "charSelected" and id == char.id():
+                screen.blit(self.images[1], (x, y))
             screen.blit(self.images[char.typeImage()], (x, y))
             text_surface = font.render(f"{char.health()} / {char.total_health()}", True, (0, 0, 0))
             screen.blit(text_surface, (x + 70, y + 32))
