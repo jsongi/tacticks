@@ -54,7 +54,7 @@ class Unit:
         self._range += value
     
     def addMovement(self, value):
-        self._range += value
+        self._movement += value
 
     def id(self) -> int:
         return self._id
