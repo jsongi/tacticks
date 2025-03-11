@@ -9,11 +9,12 @@ class Patron:
         self._rarity = rarity
         self._description = description
         self._purchased = False
+        self.statChanges = 0
 
     def getImage(self):
         return self._imageNum
     
-    # End of round (1), on attack (2), after turn (3), during shop (4), during round (5), flat buff (6)
+    # End of round (1), on attack (2), after turn (3), during shop (4), during round (5), flat buff (6), on sell (7)
     def getEffectType(self):
         return self._effectType
 
@@ -41,10 +42,12 @@ class Patron:
             case 1: # Clergyman
                 for char in chars:
                     char.addTotalHealth(5)
+                self.statChanges += 5
                 return
             case 2: # Librarian
                 for char in chars:
                     char.addMagic(1)
+                self.statChanges += 1
                 return
             case 3: # Conqueror
                 return
@@ -53,6 +56,7 @@ class Patron:
                     char.addHealth(15)
                 return
             case 5: # Merchant
+                gold[0] += 3
                 return 
             case 6: # Armorer
                 for char in chars:
@@ -63,10 +67,18 @@ class Patron:
                     char.addAttack(8)
                 return
             case 8: # Enchanter
+                for char in chars:
+                    char.addMagic(8)
                 return
             case 9: # Generalist
+                for char in chars:
+                    char.addAttack(6)
+                    char.addMagic(6)
+                self.statChanges = 6
                 return
             case 10: # Cobbler
+                for char in chars:
+                    char.addMovement(2)
                 return
             case 11: # Peddler
                 return
@@ -92,7 +104,12 @@ class Patron:
                 return
             case 18:
                 return
-            case 19:
+            case 19: # Thieves Guild
+                for char in chars:
+                    if char._type == "Thief":
+                        gold[0] += 2
+                    if char._type == "Marauder":
+                        gold[0] += 3
                 return
             case 20:
                 return

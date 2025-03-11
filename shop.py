@@ -27,16 +27,18 @@ class Shop:
             Patron(26, 1, 2, 4, "Librarian", 0, "+1 Magic Power to all units at end of round"),
             Patron(27, 1, 3, 4, "Conqueror", 0, "+1 Attack to all units per 5 enemies killed"),
             Patron(27, 1, 4, 4, "Physician", 0, "Heals 15 HP to all units at end of round"),
-            Patron(27, 4, 5, 4, "Merchant", 0, "+3 Gold at end of round"),
+            Patron(27, 1, 5, 4, "Merchant", 0, "+3 Gold at end of round"),
             Patron(27, 6, 6, 4, "Armorer", 0, "+40 Total HP to all units"),
             Patron(27, 6, 7, 4, "Weaponsmith", 0, "+8 Attack to all units"),
             Patron(27, 6, 8, 4, "Enchanter", 0, "+8 Magic Power to all units"),
             Patron(27, 6, 9, 4, "Generalist", 0, "+6 Attack and +6 Magic Power to all units"),
             Patron(27, 6, 10, 4, "Cobbler", 0, "+2 movement to all units"),
             Patron(27, 4, 11, 4, "Peddler", 0, "1 free reroll per shop"),
-            Patron(24, 4, 14, 6, "Jack", 1, "Flat boost to all stats (+30 Total HP, +6 Attack, +6 Magic)"),
+            Patron(24, 6, 14, 6, "Jack", 1, "Flat boost to all stats (+30 Total HP, +6 Attack, +6 Magic)"),
             Patron(27, 2, 16, 6, "Duelist", 1, "Buffs units with 1 range"),
-            Patron(23, 3, 24, 8, "Plague Doctor", 3, "Enemies lose half their remaining HP each turn")
+            Patron(27, 1, 19, 6, "Thieves Guild", 2, "+2 Gold at end of round per thief, +3 per Marauder"),
+            Patron(23, 3, 24, 8, "Plague Doctor", 3, "Enemies lose half their current HP each turn"),
+            Patron(27, 7, 25, 8, "Necromancer", 3, "Gains stat increases per unit sold")
         ]
 
         self._units = [
@@ -75,8 +77,6 @@ class Shop:
             if(patron._effectIndex == 11):
                 self.free_reroll = True
                 self.reroll_cost = 0
-            elif(patron._effectIndex == 5):
-                gold[0] += 3
         return
 
     def refresh_items(self, chars):
@@ -287,6 +287,9 @@ class Shop:
             patrons.append(clicked_asset)
             if clicked_asset.getEffectType() == 4 or clicked_asset.getEffectType() == 6:
                 clicked_asset.activateEffect(chars, None, None, gold, None)
+                if clicked_asset._effectIndex == 11:
+                    self.free_reroll = True
+                    self.reroll_cost = 0 
             self.displayed_patrons[self.displayed_patrons.index(clicked_asset)] = None
             return result
         elif clicked_asset in self._units and gold[0] >= clicked_asset.getCost() and len(chars) < 6:
@@ -296,7 +299,7 @@ class Shop:
             chars.append(copy.copy(clicked_asset))
             for patron in patrons:
                 if patron.getEffectType() == 6:
-                    patron.activateEffects(chars, None, None, gold)
+                    patron.activateEffect(chars, None, None, gold, None)
             self.displayed_units[self.displayed_units.index(clicked_asset)] = None
             return result
         elif clicked_asset in self._upgrades and gold[0] >= clicked_asset.getCost():
