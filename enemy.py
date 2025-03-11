@@ -1,11 +1,15 @@
 class Enemy:
 
     def __init__(self, round, id):
+        # 14 - 22 for enemy image indexes
         self.stats = [
             [10, 2, 1, 2, 14, "Beetle"], # Beetle
             [5, 3, 3, 2, 15, "Tick"], # Tick
             [5, 1, 1, 4, 16, "Mite"], # Mite
-            [] # Articklery
+            [30, 1, 1, 1, 17], # Roach
+            [10, 5, 5, 1, 18], # Articklery
+            [50, 5, 1, 2, 19] # Boss 1
+            [100, 8, 1, 2, 20] # Boss 2
                 ]
         
         self.selected_stats = 0
@@ -52,10 +56,10 @@ class Enemy:
 
     def handle_effects(self, chars, boardState, char_positions):
         match self._id:
-            case 14:
+            case 20: 
                 for c in chars:
                     if c.health() - self._attack / 5 < 0:
-                        c.setHealth(1)
+                        c.set_health(1)
                     else:
                         c.update_health((int)(self._attack / 5))
             case 15:
