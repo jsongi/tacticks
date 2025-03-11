@@ -259,8 +259,9 @@ class Board:
                     for c in chars:
                         if c.id() == self.boardState[char_x_pos][char_y_pos]:
                             c.update_health(attack_value)
-                            if c.health() < 0:
+                            if c.health() <= 0:
                                 self.boardState[char_x_pos][char_y_pos] = 0
+                                chars.remove(c)
 
             else: # Out of attack range, move as close as possible
                 new_pos = path[movement_range - 1] if len(path) >= movement_range else path[-1]
