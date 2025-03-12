@@ -40,12 +40,12 @@ levels = [["aaa", "aab", "aac", "aad", "aae"]
           ]
 #["aba", "abb", "abc", "abd", "abe"],
 #id has to start from 4
-unit1 = Unit(40, 40, 5, 0, 1, 2, 4, "Knight", 4, False, "Basic melee unit (Requires 3 to buy Executioner)")
+unit1 = Unit(40, 40, 5, 0, 1, 2, 4, "Knight", 4, False, "Basic melee unit (Requires 3 to buy Executioner) [40 HP, 3 ATTACK, 1 RANGE, 2 MOVEMENT]")
 patrons = []
 chars = [unit1] # , unit2, unit3, unit4 
 char_moves = []
 turn_counter = 5
-level = "aab"
+level = "aaa"
 level_counter = -1
 current_level = 3
 selected_levels = []
@@ -94,11 +94,11 @@ while running:
 
         if game_state == "shop":
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            shop.check_hover(mouse_x, mouse_y)
+            shop.check_hover(mouse_x, mouse_y, patrons, chars)
             
             if event.type == pygame.MOUSEBUTTONDOWN:  # Detect mouse click
                 mouse_x, mouse_y = pygame.mouse.get_pos()
-                click_status = shop.check_click(mouse_x, mouse_y)
+                click_status = shop.check_click(mouse_x, mouse_y, patrons, chars)
                 
                 result = shop.handle_click(gold, click_status, patrons, chars)
                 
@@ -125,7 +125,7 @@ while running:
                     screen.fill((255, 255, 255))
                     result = 1
             else:
-                shop.display(screen, gold)
+                shop.display(screen, gold, patrons, chars)
         else:
             if is_player_turn:
                 if event.type == pygame.MOUSEBUTTONDOWN:  # Detect mouse click

@@ -78,7 +78,7 @@ class Patron:
                 return
             case 10: # Cobbler
                 for char in chars:
-                    char.addMovement(2)
+                    char.addMovement(1)
                 return
             case 11: # Peddler
                 return

@@ -32,7 +32,7 @@ class Shop:
             Patron(27, 6, 7, 4, "Weaponsmith", 0, "+8 Attack to all units"),
             Patron(27, 6, 8, 4, "Enchanter", 0, "+8 Magic Power to all units"),
             Patron(27, 6, 9, 4, "Generalist", 0, "+6 Attack and +6 Magic Power to all units"),
-            Patron(27, 6, 10, 4, "Cobbler", 0, "+2 movement to all units"),
+            Patron(27, 6, 10, 4, "Cobbler", 0, "+1 movement to all units"),
             Patron(27, 4, 11, 4, "Peddler", 0, "1 free reroll per shop"),
             Patron(24, 6, 14, 6, "Jack", 1, "Flat boost to all stats (+30 Total HP, +6 Attack, +6 Magic)"),
             Patron(27, 2, 16, 6, "Duelist", 1, "Buffs units with 1 range"),
@@ -64,7 +64,9 @@ class Shop:
         self.displayed_units = []
         self.displayed_upgrades = []
         self.hovered_item = None
+        self.selected_item = None
         self.free_reroll = False
+        self.move_units = False
 
         for image in assets:
             self._images.append(pygame.image.load(image)) 
@@ -125,9 +127,6 @@ class Shop:
             else:
                 common_units.append(unit)
 
-        # Determine available units for selection
-        available_units = common_units[:]  # Start with all common units
-
         num_to_select = 2
 
         # Decide how many restricted units to include
@@ -145,7 +144,7 @@ class Shop:
             [u for u in self._upgrades], 2
         )
 
-    def check_hover(self, mouse_x, mouse_y):
+    def check_hover(self, mouse_x, mouse_y, patrons, chars):
         """ Detects which item is being hovered over and stores it. """
         self.hovered_item = None  # Reset hover
 
@@ -165,7 +164,36 @@ class Shop:
                 return
             y_offset += 70
 
-    def display(self, screen, gold):
+        # Check owned patrons
+        patron_width, patron_height = 32, 32 # Each patron is 32x32
+        start_x, start_y = 830, 530  # Position for owned patrons
+        spacing_x = 8 
+
+        for index, patron in enumerate(patrons):
+            patron_x = start_x + index * (patron_width + spacing_x)
+            patron_y = start_y
+            patron_rect = pygame.Rect(patron_x, patron_y, patron_width, patron_height)
+
+            if patron_rect.collidepoint(mouse_x, mouse_y):
+                self.hovered_item = (patron, True)  # True for owned patron
+                return
+
+        # Check owned units (chars)
+        # Each unit is 14x14 pixel
+
+        for index, unit in enumerate(chars):  # Check each owned character
+            row = index // 3  # Rows determined by index
+            col = index % 3  # 3 columns
+
+            unit_x = 885 + col * (42)
+            unit_y = 135 + row * (42)
+
+            unit_rect = pygame.Rect(unit_x, unit_y, 20, 20)
+            if unit_rect.collidepoint(mouse_x, mouse_y):
+                self.hovered_item = (unit, False)  # False for owned unit
+                return
+
+    def display(self, screen, gold, patrons, chars):
         """ Draw shop items and reroll button. """
         screen.fill((255, 255, 255))  # Clear screen
 
@@ -187,7 +215,7 @@ class Shop:
                 screen.blit(text_surface, (60, y_offset + 10))
                 screen.blit(self._images[item.getImage()], (180, y_offset - 22))
             y_offset += 70
-
+        
         # Units (Right Side)
         y_offset = 200
         for i, item in enumerate(self.displayed_units):
@@ -198,18 +226,62 @@ class Shop:
                 screen.blit(self._images[item.typeImage()], (680, y_offset - 22))
             y_offset += 70
 
-        # Display description on the side
-        # TODO: make this better
-        
+        # TODO: Check this behavior if the type is being checked correctly
         if self.hovered_item is not None and self.hovered_item[0] is not None:
-            if self.hovered_item[1]:
-                pygame.draw.rect(screen, (200, 200, 200), (50, 800, 600, 80))  # Background for text
-                desc_surface = font.render(self.hovered_item[0].getDescription(), True, (0, 0, 0))
-                screen.blit(desc_surface, (60, 820))
+            if self.hovered_item[0] is Unit:
+                if self.hovered_item[0].id != 0:
+                    pygame.draw.rect(screen, (200, 200, 200), (50, 800, 600, 80))  # Background for text
+                    desc_surface = font.render(self.hovered_item[0].getDescription(), True, (0, 0, 0))
+                    screen.blit(desc_surface, (60, 820))
+                else: # Is an owned unit, display stats for owned unit
+                    pygame.draw.rect(screen, (200, 200, 200), (50, 800, 600, 80))  # Background for text
+                    desc_surface = font.render(self.hovered_item[0].getDescription(), True, (0, 0, 0))
+                    screen.blit(desc_surface, (60, 820))
             else:
-                pygame.draw.rect(screen, (200, 200, 200), (50, 800, 1000, 80))  # Background for text
-                desc_surface = font.render(self.hovered_item[0].getDescription(), True, (0, 0, 0))
-                screen.blit(desc_surface, (60, 820))
+                if self.hovered_item[0] in patrons: # Is an owned patron, display flavor stats for patron
+                    pygame.draw.rect(screen, (200, 200, 200), (50, 800, 1000, 80))  # Background for text
+                    desc_surface = font.render(self.hovered_item[0].getDescription(), True, (0, 0, 0))
+                    screen.blit(desc_surface, (60, 820))
+                else:
+                    pygame.draw.rect(screen, (200, 200, 200), (50, 800, 1000, 80))  # Background for text
+                    desc_surface = font.render(self.hovered_item[0].getDescription(), True, (0, 0, 0))
+                    screen.blit(desc_surface, (60, 820))
+
+        # Display owned units
+        for index, char in enumerate(chars):
+            row = index // 3  # 0 for first row, 1 for second row
+            col = index % 3   # 0-2 for columns
+
+            x = 850 + col * (42)
+            y = 100 + row * (42)
+
+            if self.selected_item == char:
+                screen.blit(self._images[1], (x, y))
+                
+                pygame.draw.rect(screen, (255, 100, 0), (880, 250, 100, 50))
+                reroll_text = font.render(f"Sell (${int(self.selected_item.getCost() / 2)})", True, (0, 0, 0))
+                screen.blit(reroll_text, (890, 265))
+
+            screen.blit(self._images[char.typeImage()], (x, y))
+        # Display owned patrons
+        x_offset = 800
+        pygame.draw.rect(screen, (200, 200, 200), (810, 520, 230, 50))
+        for i, patron in enumerate(patrons):     
+            patron_width, patron_height = 32, 32 # Each patron is 32x32
+            start_x, start_y = 830, 530  # Position for owned patrons
+            spacing_x = 8 
+            patron_x = start_x + i * (patron_width + spacing_x)
+            patron_y = start_y
+            if self.selected_item == patron:
+                pygame.draw.rect(screen, (255, 0, 0), (patron_x - 6, patron_y - 5, 40, 40))
+                
+                # Sell button for patron
+                pygame.draw.rect(screen, (255, 100, 0), (870, 580, 100, 50))
+                reroll_text = font.render(f"Sell (${int(self.selected_item.getCost() / 2)})", True, (0, 0, 0))
+                screen.blit(reroll_text, (880, 595))    
+
+            screen.blit(self._images[patron.getImage()], (x_offset, 500))
+            x_offset += 40
 
         # Reroll Button
         pygame.draw.rect(screen, (255, 100, 0), (210, 500, 100, 50))
@@ -228,8 +300,18 @@ class Shop:
 
         pygame.display.flip()
 
-    def check_click(self, mouse_x, mouse_y):
-        """ Determines if an item or the reroll button was clicked. """
+    def check_click(self, mouse_x, mouse_y, patrons, chars):
+        # Check patron sell button if it is valid
+        if self.selected_item in patrons:
+            if 870 <= mouse_x <= 970 and 580 <= mouse_y <= 630:
+                return "sellpatron"
+        
+        if self.selected_item in chars:
+            if 880 <= mouse_x <= 980 and 250 <= mouse_y <= 300:
+                return "sellchar"
+        
+        self.selected_item = None
+
         # Check patrons
         y_offset = 150
         for item in self.displayed_patrons:
@@ -250,6 +332,31 @@ class Shop:
             if 550 <= mouse_x <= 750 and y_offset <= mouse_y <= y_offset + 50:
                 return item
             y_offset += 70
+
+        # Check owned patrons
+        patron_width, patron_height = 32, 32 # Each patron is 32x32
+        start_x, start_y = 830, 530  # Position for owned patrons
+        spacing_x = 8 
+
+        for index, patron in enumerate(patrons):
+            patron_x = start_x + index * (patron_width + spacing_x)
+            patron_y = start_y
+
+            if patron_x <= mouse_x <= patron_x + 32 and patron_y <= mouse_y <= patron_y + 32:
+                self.selected_item = patron
+                return "selectedpatron"
+        
+        # Check owned units
+        for index, unit in enumerate(chars):
+            row = index // 3  # Rows determined by index
+            col = index % 3  # 3 columns
+
+            unit_x = 885 + col * (42)
+            unit_y = 135 + row * (42)
+
+            if unit_x <= mouse_x <= unit_x + 20 and unit_y <= mouse_y <= unit_y + 20:
+                self.selected_item = unit
+                return "selectedunit"
 
         # Check reroll button
         if 210 <= mouse_x <= 310 and 500 <= mouse_y <= 550:
@@ -281,6 +388,16 @@ class Shop:
         elif clicked_asset == "continue":
             result = 0
             return result  # Return updated gold amount
+        elif clicked_asset == "sellpatron":
+            self.selected_item.handleSold(chars)
+            gold[0] += int(self.selected_item.getCost() / 2)
+            patrons.remove(self.selected_item)
+            return result
+        elif clicked_asset == "sellchar":
+            if len(chars) > 1:
+                gold[0] += int(self.selected_item.getCost() / 2)
+                chars.remove(self.selected_item)
+            return result
         elif clicked_asset in self._patrons and gold[0] >= clicked_asset.getCost() and len(patrons) < 5:
             gold[0] -= clicked_asset.getCost()
             clicked_asset.setPurchased(True)
