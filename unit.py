@@ -1,6 +1,6 @@
 class Unit:
 
-    def __init__(self, total_health: int, health: int, attack: int, magic: int, range: int, movement: int, id: int, type: str, cost: int, magic_user: bool, description: str):
+    def __init__(self, total_health: int, health: int, attack: int, magic: int, range: int, movement: int, id: int, type: str, cost: int, magic_user: bool, description: str, location = (int, int)):
         self._total_health: int = total_health
         self._health: int = health
         self._attack: int = attack
@@ -12,6 +12,7 @@ class Unit:
         self._cost: int = cost
         self._magic_user: bool = magic_user
         self._description: str = description
+        self._location = location
 
     def total_health(self) -> int:
         return self._total_health
@@ -33,6 +34,12 @@ class Unit:
     
     def getDescription(self):
         return self._description
+    
+    def location(self):
+        return self._location
+    
+    def setLocation(self, location):
+        self._location = location
 
     def addTotalHealth(self, value):
         self._health += value

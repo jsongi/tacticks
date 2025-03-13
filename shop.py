@@ -42,16 +42,16 @@ class Shop:
         ]
 
         self._units = [
-            Unit(40, 40, 3, 0, 1, 2, 0, "Knight", 4, False, "Basic melee unit (Requires 3 to buy Executioner) [40 HP, 3 ATTACK, 1 RANGE, 2 MOVEMENT]"),
-            Unit(30, 30, 2, 0, 1, 4, 0, "Thief", 4, False, "Basic melee unit, generates 1 gold at end of round (Requires 3 to buy Marauder) [30 HP, 2 ATTACK, 1 RANGE, 4 MOVEMENT]"),
-            Unit(25, 25, 4, 0, 3, 3, 0, "Archer", 4, False, "Basic ranged unit (Requires 3 to purchase Catapult) [25 HP, 4 ATTACK, 3 RANGE, 3 MOVEMENT]"),
-            Unit(20, 20, 0, 6, 3, 2, 0, "Wizard", 4, True, "Basic magic unit (Requires 3 to purchase Archmage) [20 HP, 6 MAGIC, 3 RANGE, 2 MOVEMENT]"),
-            Unit(20, 20, 0, 2, 3, 3, 0, "Healer", 3, True, "Basic magic unit, heals allies (Requires 3 to purchase Mystic) [20 HP, 3 MAGIC, 3 RANGE, 3 MOVEMENT]"),
-            Unit(70, 70, 15, 0, 1, 2, 0, "Executioner", 8, False, "Rare melee unit, executes enemies when an attack reduces them to below 10% HP"),
-            Unit(50, 50, 10, 0, 1, 4, 0, "Marauder", 8, False, "Rare melee unit"),
-            Unit(40, 40, 40, 0, 10, 1, 0, "Catapult", 8, False, "Rare ranged unit, nearly global range [40 HP, 40 ATTACK, 10 RANGE, 1 MOVEMENT]"),
-            Unit(40, 40, 0, 25, 4, 2, 0, "Archmage", 8, True, "Rare magic unit, deals 1/10 of damage to all other enemies"),
-            Unit(30, 30, 0, 20, 4, 2, 0, "Mystic", 8, True, "Rare magic unit, heals allies")
+            Unit(40, 40, 3, 0, 1, 2, 0, "Knight", 4, False, "Basic melee unit (Requires 3 to buy Executioner) [40 HP, 3 ATTACK, 1 RANGE, 2 MOVEMENT]", (0, 0)),
+            Unit(30, 30, 2, 0, 1, 4, 0, "Thief", 4, False, "Basic melee unit, generates 1 gold at end of round (Requires 3 to buy Marauder) [30 HP, 2 ATTACK, 1 RANGE, 4 MOVEMENT]", (0, 0)),
+            Unit(25, 25, 4, 0, 3, 3, 0, "Archer", 4, False, "Basic ranged unit (Requires 3 to purchase Catapult) [25 HP, 4 ATTACK, 3 RANGE, 3 MOVEMENT]", (0, 0)),
+            Unit(20, 20, 0, 6, 3, 2, 0, "Wizard", 4, True, "Basic magic unit (Requires 3 to purchase Archmage) [20 HP, 6 MAGIC, 3 RANGE, 2 MOVEMENT]", (0, 0)),
+            Unit(20, 20, 0, 2, 3, 3, 0, "Healer", 3, True, "Basic magic unit, heals allies (Requires 3 to purchase Mystic) [20 HP, 3 MAGIC, 3 RANGE, 3 MOVEMENT]", (0, 0)),
+            Unit(70, 70, 15, 0, 1, 2, 0, "Executioner", 8, False, "Rare melee unit, executes enemies when an attack reduces them to below 10% HP", (0, 0)),
+            Unit(50, 50, 10, 0, 1, 4, 0, "Marauder", 8, False, "Rare melee unit", (0, 0)),
+            Unit(40, 40, 40, 0, 10, 1, 0, "Catapult", 8, False, "Rare ranged unit, nearly global range [40 HP, 40 ATTACK, 10 RANGE, 1 MOVEMENT]", (0, 0)),
+            Unit(40, 40, 0, 25, 4, 2, 0, "Archmage", 8, True, "Rare magic unit, deals 1/10 of damage to all other enemies", (0, 0)),
+            Unit(30, 30, 0, 20, 4, 2, 0, "Mystic", 8, True, "Rare magic unit, heals allies", (0, 0))
         ]
         # TODO: The images slots for this are temporary and need to be updated
         self._upgrades = [
@@ -64,8 +64,10 @@ class Shop:
         self.displayed_units = []
         self.displayed_upgrades = []
         self.unit_ids = [4, 5, 6, 7, 8, 9]
+        self.unit_locs = [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2)]
         self.hovered_item = None
         self.selected_item = None
+        self.last_selected_unit = None
         self.free_reroll = False
         self.move_units = False
 
@@ -183,8 +185,7 @@ class Shop:
         # Each unit is 14x14 pixel
 
         for index, unit in enumerate(chars):  # Check each owned character
-            row = index // 3  # Rows determined by index
-            col = index % 3  # 3 columns
+            row, col = unit.location()
 
             unit_x = 885 + col * (42)
             unit_y = 135 + row * (42)
@@ -250,8 +251,7 @@ class Shop:
 
         # Display owned units
         for index, char in enumerate(chars):
-            row = index // 3  # 0 for first row, 1 for second row
-            col = index % 3   # 0-2 for columns
+            row, col = char.location()
 
             x = 850 + col * (42)
             y = 100 + row * (42)
@@ -283,6 +283,14 @@ class Shop:
 
             screen.blit(self._images[patron.getImage()], (x_offset, 500))
             x_offset += 40
+
+        # Move units 
+        if self.move_units:
+            pygame.draw.rect(screen, (0, 255, 0), (900, 50, 100, 50))
+        else:
+            pygame.draw.rect(screen, (255, 0, 0), (900, 50, 100, 50))
+        reroll_text = font.render(f"Move units", True, (0, 0, 0))
+        screen.blit(reroll_text, (910, 65))
 
         # Reroll Button
         pygame.draw.rect(screen, (255, 100, 0), (210, 500, 100, 50))
@@ -349,15 +357,30 @@ class Shop:
         
         # Check owned units
         for index, unit in enumerate(chars):
-            row = index // 3  # Rows determined by index
-            col = index % 3  # 3 columns
+            row, col = unit.location()
 
             unit_x = 885 + col * (42)
             unit_y = 135 + row * (42)
 
             if unit_x <= mouse_x <= unit_x + 20 and unit_y <= mouse_y <= unit_y + 20:
                 self.selected_item = unit
-                return "selectedunit"
+                if self.last_selected_unit and self.move_units:
+                    return "movedunit"
+                else:
+                    self.last_selected_unit = unit
+                    return "selectedunit"
+                
+        if self.selected_item is None and self.move_units and self.last_selected_unit is not None:
+            empty_row = (mouse_y - 135) // 42
+            empty_col = (mouse_x - 885) // 42
+
+            # Ensure it's within grid bounds (0-1 for rows, 0-2 for columns)
+            if 0 <= empty_row < 2 and 0 <= empty_col < 3:
+                # Check if the space is occupied
+                if not any(unit.location() == (empty_row, empty_col) for unit in chars):
+                    self.last_selected_unit.setLocation((empty_row, empty_col))  # Move to empty space
+                    self.last_selected_unit = None
+                    return None
 
         # Check reroll button
         if 210 <= mouse_x <= 310 and 500 <= mouse_y <= 550:
@@ -367,6 +390,11 @@ class Shop:
         if 500 <= mouse_x <= 600 and 500 <= mouse_y <= 550:
             self.reroll_cost = 5
             return "continue"
+
+        # Check move unit button
+        if 900 <= mouse_x <= 1000 and 50 <= mouse_y <= 100:
+            self.move_units = not self.move_units
+            return None
 
         return None
         
@@ -398,6 +426,7 @@ class Shop:
             if len(chars) > 1:
                 gold[0] += int(self.selected_item.getCost() / 2)
                 chars.remove(self.selected_item)
+            self.last_selected_unit = None
             return result
         elif clicked_asset in self._patrons and gold[0] >= clicked_asset.getCost() and len(patrons) < 5:
             gold[0] -= clicked_asset.getCost()
@@ -412,16 +441,24 @@ class Shop:
             return result
         elif clicked_asset in self._units and gold[0] >= clicked_asset.getCost() and len(chars) < 6:
             gold[0] -= clicked_asset.getCost()
-            # TODO: Calculate new id for unit in board display when characters are sold and new ones are bought
+
             existing_ids = {char.id() for char in chars}
+            existing_locations = {char.location() for char in chars}
             new_id = 0
+            new_loc = (-1, -1)
 
             for num in self.unit_ids:
                 if num not in existing_ids:
                     new_id = num
                     break
 
+            for loc in self.unit_locs:
+                if loc not in existing_locations:
+                    new_loc = loc
+                    break
+
             clicked_asset.setId(new_id)
+            clicked_asset.setLocation(new_loc)
             chars.append(copy.copy(clicked_asset))
             for patron in patrons:
                 if patron.getEffectType() == 6:
@@ -433,6 +470,14 @@ class Shop:
             gold[0] -= clicked_asset.getCost()
             clicked_asset.activateEffect(chars)
             self.displayed_upgrades[self.displayed_upgrades.index(clicked_asset)] = None
+            return result
+        elif clicked_asset == "movedunit":
+            target_row, target_col = self.selected_item.location()
+            self.selected_item.setLocation(self.last_selected_unit.location())
+            self.last_selected_unit.setLocation((target_row, target_col))
+
+            self.selected_item = None  
+            self.last_selected_unit = None
             return result
         else:
             return result
