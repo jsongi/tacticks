@@ -63,6 +63,7 @@ class Shop:
         self.displayed_patrons = []
         self.displayed_units = []
         self.displayed_upgrades = []
+        self.unit_ids = [4, 5, 6, 7, 8, 9]
         self.hovered_item = None
         self.selected_item = None
         self.free_reroll = False
@@ -412,11 +413,20 @@ class Shop:
         elif clicked_asset in self._units and gold[0] >= clicked_asset.getCost() and len(chars) < 6:
             gold[0] -= clicked_asset.getCost()
             # TODO: Calculate new id for unit in board display when characters are sold and new ones are bought
-            clicked_asset.setId(len(chars) + 4)
+            existing_ids = {char.id() for char in chars}
+            new_id = 0
+
+            for num in self.unit_ids:
+                if num not in existing_ids:
+                    new_id = num
+                    break
+
+            clicked_asset.setId(new_id)
             chars.append(copy.copy(clicked_asset))
             for patron in patrons:
                 if patron.getEffectType() == 6:
                     patron.activateEffect(chars, None, None, gold, None)
+
             self.displayed_units[self.displayed_units.index(clicked_asset)] = None
             return result
         elif clicked_asset in self._upgrades and gold[0] >= clicked_asset.getCost():
