@@ -173,15 +173,16 @@ class Board:
                     
                     row = []
             
-                    for num in map(int, line.split()):  # Convert each number to int
+                    for colNum, num in enumerate(map(int, line.split())):  # Convert each number to int
                         if num == 1:
-                            if usedChars < len(chars):
-                                row.append(chars[usedChars].id())  # Replace with available char
-                                self.char_positions.append((lineNum, len(row) - 1))  # Store (row, col)
-                                self.idTypes.append((chars[usedChars].id(), chars[usedChars].typeImage()))
-                                usedChars += 1
+                            matching_char = next((char for char in chars if char.location() == (lineNum, colNum)), None)
+
+                            if matching_char:
+                                row.append(matching_char.id())  # Keep character in correct place
+                                self.char_positions.append((lineNum, colNum))  # Store updated (row, col)
+                                self.idTypes.append((matching_char.id(), matching_char.typeImage()))
                             else:
-                                row.append(0)  # Replace with 0 if no available chars left
+                                row.append(0)  # If no character assigned, keep as empty
                         else:
                             if num in self.enemyTypes:
                                 self.enemy_positions.append(((lineNum, len(row)), Enemy(round, num)))

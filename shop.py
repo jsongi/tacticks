@@ -85,6 +85,8 @@ class Shop:
         return
 
     def refresh_items(self, chars):
+        self.last_selected_unit = None
+        self.move_units = False
         rarity_weights = {0: 75, 1: 20, 2: 4, 3: 1}
         # Filter available patrons
         available_patrons = [p for p in self._patrons if p not in self._owned_patrons and not p.getPurchased()]
@@ -249,6 +251,12 @@ class Shop:
                     desc_surface = font.render(self.hovered_item[0].getDescription(), True, (0, 0, 0))
                     screen.blit(desc_surface, (60, 820))
 
+        # Draw tiles under unit locations
+        for index in range(6):
+            x = 850 + (index % 3) * (42)
+            y = 100 + (index // 3) * (42)
+            screen.blit(self._images[0], (x, y))
+
         # Display owned units
         for index, char in enumerate(chars):
             row, col = char.location()
@@ -393,6 +401,7 @@ class Shop:
 
         # Check move unit button
         if 900 <= mouse_x <= 1000 and 50 <= mouse_y <= 100:
+            self.last_selected_unit = None
             self.move_units = not self.move_units
             return None
 
