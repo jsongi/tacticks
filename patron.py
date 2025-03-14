@@ -14,7 +14,7 @@ class Patron:
     def getImage(self):
         return self._imageNum
     
-    # End of round (1), on attack (2), after turn (3), during shop (4), during round (5), flat buff (6), on sell (7)
+    # End of round (1), on attack (2), after turn (3), during shop (4), during round (5), flat buff (6), on sell (7) end of shop phase (8)
     def getEffectType(self):
         return self._effectType
 
@@ -74,7 +74,6 @@ class Patron:
                 for char in chars:
                     char.addAttack(6)
                     char.addMagic(6)
-                self.statChanges = 6
                 return
             case 10: # Cobbler
                 for char in chars:
@@ -100,7 +99,14 @@ class Patron:
                 if chars.range() == 1: # Singular character should be passed here
                     enemy[1].update_health(15) # Tentative way we're doing flat buffs
                 return
-            case 17:
+            case 17: # Mercantilist
+                for char in chars:
+                    char.addMagic(-1 * self.statChanges)
+                    char.addAttack(-1 * self.statChanges)
+                self.statChanges = gold[0] / 2
+                for char in chars:
+                    char.addMagic(self.statChanges)
+                    char.addAttack(self.statChanges)
                 return
             case 18:
                 return
@@ -125,6 +131,146 @@ class Patron:
                     if health > 0:
                         enemy[1].update_health(health)
                 return
-            
-    def handleSold(self, chars):
+
+    def onUnitPurchase(self, char, chars, enemies, enemy, gold, boardState):
+        match self._effectIndex:
+            case 1: # Clergyman
+                char.addTotalHealth(self.statChanges)
+                return
+            case 2: # Librarian
+                char.addMagic(self.statChanges)
+                return
+            case 3: # Conqueror
+                return
+            case 4: # Physician
+                return
+            case 5: # Merchant
+                return 
+            case 6: # Armorer
+                char.addTotalHealth(40)
+                return
+            case 7: # Weaponsmith
+                char.addAttack(8)
+                return
+            case 8: # Enchanter
+                char.addMagic(8)
+                return
+            case 9: # Generalist
+                char.addAttack(6)
+                char.addMagic(6)
+                return
+            case 10: # Cobbler
+                char.addMovement(1)
+                return
+            case 11: # Peddler
+                return
+            case 12:
+                return
+            case 13:
+                return
+            case 14: #Jack
+                char.addTotalHealth(30)
+                char.addAttack(8)
+                char.addMagic(8)
+                return
+            case 15: # Conquistador
+                char.addRange(1)
+                return
+            case 16: # Duelist
+                return
+            case 17: # Mercantilist
+                char.addMagic(self.statChanges)
+                char.addAttack(self.statChanges)
+                return
+            case 18:
+                return
+            case 19: # Thieves Guild
+                return
+            case 20:
+                return
+            case 21:
+                return
+            case 22:
+                return
+            case 23:
+                return
+            case 24: # Plague Doctor
+                return
+
+    def handleSold(self, chars, enemies, enemy, gold, boardState):
+        match self._effectIndex:
+            case 1: # Clergyman
+                for char in chars:
+                    char.addTotalHealth(-1 * self.statChanges)
+                return
+            case 2: # Librarian
+                for char in chars:
+                    char.addMagic(-1 * self.statChanges)
+                return
+            case 3: # Conqueror
+                return
+            case 4: # Physician
+                return
+            case 5: # Merchant
+                return 
+            case 6: # Armorer
+                for char in chars:
+                    char.addTotalHealth(-40)
+                return
+            case 7: # Weaponsmith
+                for char in chars:
+                    char.addAttack(-8)
+                return
+            case 8: # Enchanter
+                for char in chars:
+                    char.addMagic(-8)
+                return
+            case 9: # Generalist
+                for char in chars:
+                    char.addAttack(-6)
+                    char.addMagic(-6)
+                return
+            case 10: # Cobbler
+                for char in chars:
+                    char.addMovement(-1)
+                return
+            case 11: # Peddler
+                return
+            case 12:
+                return
+            case 13:
+                return
+            case 14: #Jack
+                for char in chars:
+                    char.addTotalHealth(-30)
+                    char.addAttack(-8)
+                    char.addMagic(-8)
+                return
+            case 15: # Conquistador
+                for char in chars:
+                    char.addRange(-1)
+                return
+            case 16: # Duelist
+                if chars.range() == 1: # Singular character should be passed here
+                    enemy[1].update_health(15) # Tentative way we're doing flat buffs
+                return
+            case 17: # Mercantilist
+                for char in chars:
+                    char.addMagic(-1 * self.statChanges)
+                    char.addAttack(-1 * self.statChanges)
+                return
+            case 18:
+                return
+            case 19: # Thieves Guild
+                return
+            case 20:
+                return
+            case 21:
+                return
+            case 22:
+                return
+            case 23:
+                return
+            case 24: # Plague Doctor
+                return
         return

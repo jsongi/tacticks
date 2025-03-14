@@ -154,7 +154,6 @@ class Board:
     def read_board(self, level, chars, round):
         capturing = False
         lineNum = 0
-        usedChars = 0
 
         # Clear board state to read in fresh level
         self.boardState = []

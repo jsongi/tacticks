@@ -119,6 +119,10 @@ while running:
 
                     level = selected_levels[current_level]
 
+                    for patron in patrons:
+                        if patron.getEffectType() == 8:
+                            patron.activateEffect(chars, None, None, gold, None)
+
                     game_state = "battle"
                     board.read_board(level, chars, round)
                     

@@ -36,6 +36,7 @@ class Shop:
             Patron(27, 4, 11, 4, "Peddler", 0, "1 free reroll per shop"),
             Patron(24, 6, 14, 6, "Jack", 1, "Flat boost to all stats (+30 Total HP, +6 Attack, +6 Magic)"),
             Patron(27, 2, 16, 6, "Duelist", 1, "Buffs units with 1 range"),
+            Patron(27, 8, 17, 6, "Mercantilist", 1, "Boosts attack and magic to all units by half of current gold"),
             Patron(27, 1, 19, 6, "Thieves Guild", 2, "+2 Gold at end of round per thief, +3 per Marauder"),
             Patron(23, 3, 24, 8, "Plague Doctor", 3, "Enemies lose half their current HP each turn"),
             Patron(27, 7, 25, 8, "Necromancer", 3, "Gains stat increases per unit sold")
@@ -405,6 +406,8 @@ class Shop:
             self.move_units = not self.move_units
             return None
 
+        self.last_selected_unit = None
+
         return None
         
 
@@ -427,7 +430,7 @@ class Shop:
             result = 0
             return result  # Return updated gold amount
         elif clicked_asset == "sellpatron":
-            self.selected_item.handleSold(chars)
+            self.selected_item.handleSold(chars, None, None, gold, None)
             gold[0] += int(self.selected_item.getCost() / 2)
             patrons.remove(self.selected_item)
             return result
@@ -468,11 +471,11 @@ class Shop:
 
             clicked_asset.setId(new_id)
             clicked_asset.setLocation(new_loc)
-            chars.append(copy.copy(clicked_asset))
+            
             for patron in patrons:
-                if patron.getEffectType() == 6:
-                    patron.activateEffect(chars, None, None, gold, None)
+                patron.onUnitPurchase(clicked_asset, chars, None, None, gold, None)
 
+            chars.append(copy.copy(clicked_asset))
             self.displayed_units[self.displayed_units.index(clicked_asset)] = None
             return result
         elif clicked_asset in self._upgrades and gold[0] >= clicked_asset.getCost():
