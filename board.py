@@ -22,10 +22,10 @@ class Board:
             self.images.append(pygame.image.load(image)) 
 
     def check_click(self, mouse_x, mouse_y, cell_width, cell_height): # return position and id
-        if mouse_x < 20:
-            return None
-        elif mouse_y < 20:
-            return None
+        #if mouse_x < 20:
+        #    return None
+        #elif mouse_y < 20:
+        #    return None
 
         boardxpos = (mouse_y // cell_height) - 1
         boardypos = (mouse_x // cell_width) - 1
@@ -38,16 +38,20 @@ class Board:
             if char_pixel_x + 25 <= mouse_x < char_pixel_x + cell_width + 25 and char_pixel_y + 25 <= mouse_y < char_pixel_y + cell_height + 25:
                 return ([(char_row, char_col), self.boardState[char_row][char_col]])  # Return id of the targeted character
 
+        # Check skip button
+        if 550 <= mouse_x <= 650 and 600 <= mouse_y <= 650:
+            return [(boardxpos, boardypos), -3]
+
         if((0 <= boardxpos <= 8) and (0 <= boardypos <= 8)):
             # If the position is an in range enemy position (highlighted) then we need to return some signifier that it's a valid attack action
             # The way this clears highlights is ugly
             if (any(tup == (boardxpos, boardypos) for tup, obj in self.enemy_positions)):
                 if ((boardxpos, boardypos) in self.enemy_positions_highlighted): # Valid attack action
                     self.clear_highlights()
-                    return [(boardxpos, boardypos), 10] # just using 10 as a signifier for now(?)
+                    return [(boardxpos, boardypos), -1] # just using -1 as a signifier for now(?)
                 else:
                     self.clear_highlights()
-                    return [(boardxpos, boardypos), 0] # basically a dead click
+                    return [(boardxpos, boardypos), -2] # enemy selected
             if (self.boardState[boardxpos][boardypos] != 1):
                 self.clear_highlights()
             return [(boardxpos, boardypos), self.boardState[boardxpos][boardypos]]
@@ -285,7 +289,8 @@ class Board:
                 patron.activateEffect(chars, self.enemy_positions, None, gold, self.boardState)
 
     def display(self, screen, displayType, chars, patrons):
-        
+        selected_enemy = None
+
         screen.fill((255, 255, 255))
         
         match displayType[0]:
@@ -322,6 +327,30 @@ class Board:
                 
                 self.show_actions(screen, selectedRow, selectedCol, chars, id)
 
+            case "enemySelected":               
+                # Draw image under characters first
+                for row, col in self.char_positions:
+                    screen.blit(self.images[0], (col * cell_width, row * cell_height))
+                for (row, col), e in self.enemy_positions:
+                    if displayType[1] == (row, col):
+                        selected_enemy = e
+                        screen.blit(self.images[1], (col * cell_width, row * cell_height))
+                    else:
+                        screen.blit(self.images[0], (col * cell_width, row * cell_height))
+                
+                # Draw rest of board
+                for row in range(len(self.boardState)):
+                    for col in range(len(self.boardState[0])):
+                        x = col * cell_width
+                        y = row * cell_height
+                        if(4 <= int(self.boardState[row][col]) <= 9):
+                            for pair in self.idTypes:
+                                if int(self.boardState[row][col]) == pair[0]:
+                                    screen.blit(self.images[pair[1]], (x, y))
+                                    break
+                        else:
+                            screen.blit(self.images[int(self.boardState[row][col])], (x, y))
+
             case "default":
                 self.clear_highlights()
                 # Draw image under characters first
@@ -343,7 +372,10 @@ class Board:
                             screen.blit(self.images[int(self.boardState[row][col])], (x, y))
         
         # Drawing UI
-        
+        pygame.draw.rect(screen, (255, 215, 0), (550, 600, 100, 50))
+        skip_text = font.render(f"End turn", True, (0, 0, 0))
+        screen.blit(skip_text, (560, 615))
+
         # Draw character stats
         x = 0
         y = 300
@@ -351,8 +383,11 @@ class Board:
         for char in chars:
             if displayType[0] == "charSelected" and id == char.id():
                 screen.blit(self.images[1], (x, y))
+            if char.magicUser():
+                text_surface = font.render(f"{char.health()} / {char.total_health()} - Magic: {char.magic()} - Range: {char.range()} - Movement: {char.movement()}", True, (0, 0, 0))
+            else:
+                text_surface = font.render(f"{char.health()} / {char.total_health()} - Attack: {char.attack()} - Range: {char.range()} - Movement: {char.movement()}", True, (0, 0, 0))
             screen.blit(self.images[char.typeImage()], (x, y))
-            text_surface = font.render(f"{char.health()} / {char.total_health()}", True, (0, 0, 0))
             screen.blit(text_surface, (x + 70, y + 32))
             y += 32
 
@@ -362,6 +397,17 @@ class Board:
             screen.blit(self.images[patron.getImage()], (x, y))
             x += 35
         
+        x = 350
+        y = 10
+        for (row, col), enemy in self.enemy_positions:
+            if selected_enemy is not None:
+                if selected_enemy == enemy:
+                    screen.blit(self.images[1], (x, y))
+            screen.blit(self.images[enemy.id()], (x, y))
+            text_surface = font.render(f"{enemy.health()} / {enemy.total_health()} - Attack: {enemy.attack()} - Range: {enemy.range()} - Movement: {enemy.movement()}", True, (0, 0, 0))
+            screen.blit(text_surface, (x + 70, y + 32))
+            y += 32
+
         pygame.display.flip()
 
         # TODO: UI for enemies

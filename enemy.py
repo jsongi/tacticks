@@ -29,12 +29,16 @@ class Enemy:
             health_growth = int(2 * pow(1.1, round))
             attack_growth = int(2 * pow(1.05, round))
         
-        self._health: int = self.selected_stats[0] + health_growth # round should be some slow exponential value just on hp and attack, movement and range creep should not exist(?)
+        self._total_health: int = self.selected_stats[0] + health_growth # round should be some slow exponential value just on hp and attack, movement and range creep should not exist(?)
+        self._health: int = self.selected_stats[0] + health_growth
         self._attack: int = self.selected_stats[1] + attack_growth
         self._range: int = self.selected_stats[2]
         self._movement: int = self.selected_stats[3]
         self._id: int = self.selected_stats[4]
         self._type = self.selected_stats[5]
+
+    def total_health(self) -> int:
+        return self._total_health
 
     def health(self) -> int:
         return self._health

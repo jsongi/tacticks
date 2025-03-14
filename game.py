@@ -52,6 +52,8 @@ selected_levels = []
 player_actions = 0
 is_player_turn = True
 last_clicked = -1
+time_keeper_owned = False
+turn_skip = False
 round = 1
 result = 1
 gold = [9999] #set as this for testing, lower to 5(?) later
@@ -119,9 +121,12 @@ while running:
 
                     level = selected_levels[current_level]
 
+                    time_keeper_owned = False
                     for patron in patrons:
                         if patron.getEffectType() == 8:
                             patron.activateEffect(chars, None, None, gold, None)
+                        elif patron._effectIndex == 26:
+                            time_keeper_owned = True
 
                     game_state = "battle"
                     board.read_board(level, chars, round)
@@ -146,7 +151,7 @@ while running:
                         if player_actions == len(chars):
                             is_player_turn = False
                             player_actions = 0
-                    elif boardState[0] == "charSelected" and click_status[1] == 10: # Previous click was selecting a friendly unit and current click is an enemy tile
+                    elif boardState[0] == "charSelected" and click_status[1] == -1: # Previous click was selecting a friendly unit and current click is an enemy tile
                         player_actions += 1 # Attacking action
                         char_moves.append(last_clicked) # The character that was last clicked performed an action
                         boardState = ["default", 0]
@@ -157,6 +162,12 @@ while running:
                     elif 4 <= click_status[1] <= 13 and click_status[0] not in char_moves: # Clicked target is a friendly unit and has not been moved before
                         boardState = ["charSelected", click_status[1]]
                         last_clicked = click_status[0]
+                    elif click_status[1] == -2: # Clicked target is an enemy not being attacked
+                        boardState = ["enemySelected", click_status[0]]
+                    elif click_status[1] == -3: # Skip button pressed
+                        is_player_turn = False
+                        player_actions = 0
+                        boardState = ["default", 0]
                     else:
                         boardState = ["default", 0]
             else:
@@ -171,8 +182,16 @@ while running:
                     elif char._type == "Mystic":
                         for c in chars:
                             c.addHealth(int(char.magic()))
-                            
-                board.move_enemies(chars)
+
+
+                if time_keeper_owned:
+                    if turn_skip:
+                        turn_skip = not turn_skip
+                    else:
+                        board.move_enemies(chars)
+                        turn_skip = not turn_skip    
+                else:
+                    board.move_enemies(chars)
                         
                 is_player_turn = True
                 char_moves = []

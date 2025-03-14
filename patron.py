@@ -50,6 +50,9 @@ class Patron:
                 self.statChanges += 1
                 return
             case 3: # Conqueror
+                for char in chars:
+                    char.addAttack(1)
+                self.statChanges += 1
                 return
             case 4: # Physician
                 for char in chars:
@@ -81,7 +84,7 @@ class Patron:
                 return
             case 11: # Peddler
                 return
-            case 12:
+            case 12: # 
                 return
             case 13:
                 return
@@ -117,7 +120,7 @@ class Patron:
                     if char._type == "Marauder":
                         gold[0] += 3
                 return
-            case 20:
+            case 20: # Open Courts
                 return
             case 21:
                 return
@@ -141,6 +144,7 @@ class Patron:
                 char.addMagic(self.statChanges)
                 return
             case 3: # Conqueror
+                char.addAttack(self.statChanges)
                 return
             case 4: # Physician
                 return
@@ -186,7 +190,7 @@ class Patron:
                 return
             case 19: # Thieves Guild
                 return
-            case 20:
+            case 20: # Open Courts
                 return
             case 21:
                 return
@@ -195,6 +199,10 @@ class Patron:
             case 23:
                 return
             case 24: # Plague Doctor
+                return
+            case 25: # Necromancer
+                return
+            case 26: # Time Keeper
                 return
 
     def handleSold(self, chars, enemies, enemy, gold, boardState):
@@ -208,6 +216,8 @@ class Patron:
                     char.addMagic(-1 * self.statChanges)
                 return
             case 3: # Conqueror
+                for char in chars:
+                    char.addAttack(-1 * self.statChanges)
                 return
             case 4: # Physician
                 return
@@ -263,7 +273,7 @@ class Patron:
                 return
             case 19: # Thieves Guild
                 return
-            case 20:
+            case 20: # Open Courts
                 return
             case 21:
                 return
@@ -272,5 +282,9 @@ class Patron:
             case 23:
                 return
             case 24: # Plague Doctor
+                return            
+            case 25: # Necromancer
+                return
+            case 26: # Time Keeper
                 return
         return
