@@ -33,7 +33,11 @@ assets = [
     "assets/jackofalltrades.png", # , 24
     "assets/clergyman.png", # 25
     "assets/librarian.png", # 26
-    "assets/temptreetile.png" # 27
+    "assets/temptreetile.png", # 27
+    "assets/conqueror.png", # 28
+    "assets/physician.png", # 29
+    "assets/merchant.png", # 30
+    "assets/armorer.png" # 31
 ]
 levels = [["aaa", "aab", "aac", "aad", "aae"]
           
