@@ -40,8 +40,8 @@ class Shop:
             Patron(39, 1, 19, 6, "Thieves Guild", 2, "+2 Gold at end of round per thief, +3 per Marauder"),
             Patron(40, 4, 20, 6, "Open Courts", 2, "Removes owned unit requirements for rare units to appear in shop"),
             Patron(23, 3, 24, 8, "Plague Doctor", 3, "Enemies lose half their current HP each turn"),
-            Patron(27, 7, 25, 8, "Necromancer", 3, "Gains stat increases per unit sold"),
-            Patron(27, 7, 26, 8, "Time Keeper", 3, "Every other enemy turn is skipped")
+            Patron(41, 7, 25, 8, "Necromancer", 3, "Gains stat increases per unit sold"),
+            Patron(42, 7, 26, 8, "Time Keeper", 3, "Every other enemy turn is skipped")
         ]
 
         self._units = [
@@ -74,6 +74,7 @@ class Shop:
         self.free_reroll = False
         self.ignore_unit_reqs = False
         self.move_units = False
+        self.sell_action = False
 
         for image in assets:
             self._images.append(pygame.image.load(image)) 
@@ -94,7 +95,7 @@ class Shop:
     def refresh_items(self, chars):
         self.last_selected_unit = None
         self.move_units = False
-        rarity_weights = {0: 75, 1: 20, 2: 4, 3: 1}
+        rarity_weights = {0: 75, 1: 20, 2: 4, 3: 99}
         # Filter available patrons
         available_patrons = [p for p in self._patrons if p not in self._owned_patrons and not p.getPurchased()]
 
@@ -332,7 +333,8 @@ class Shop:
         # Check patron sell button if it is valid
         if self.selected_item in patrons:
             if 870 <= mouse_x <= 970 and 580 <= mouse_y <= 630:
-                return "sellpatron"
+                self.sell_action = True
+                return self.selected_item
         
         if self.selected_item in chars:
             if 880 <= mouse_x <= 980 and 250 <= mouse_y <= 300:
@@ -439,10 +441,12 @@ class Shop:
         elif clicked_asset == "continue":
             result = 0
             return result  # Return updated gold amount
-        elif clicked_asset == "sellpatron":
+        elif clicked_asset in patrons and self.sell_action:
+            clicked_asset.setPurchased(False)
             self.selected_item.handleSold(chars, None, None, gold, None)
             gold[0] += int(self.selected_item.getCost() / 2)
             patrons.remove(self.selected_item)
+            self.sell_action = False
             return result
         elif clicked_asset == "sellchar":
             if len(chars) > 1:

@@ -46,7 +46,9 @@ assets = [
     "assets/duelist.png", # 37
     "assets/mercantilist.png", # 38
     "assets/thievesguild.png", # 39
-    "assets/opencourts.png" # 40
+    "assets/opencourts.png", # 40
+    "assets/necromancer.png", # 41
+    "assets/timekeeper.png" # 42
 ]
 levels = [["aaa", "aab", "aac", "aad", "aae"]
           
@@ -69,7 +71,7 @@ time_keeper_owned = False
 turn_skip = False
 round = 1
 result = 1
-gold = [9999] #set as this for testing, lower to 5(?) later
+gold = [999999] #set as this for testing, lower to 5(?) later
 game_state = "shop"
 enemies_remaining = 1
 
