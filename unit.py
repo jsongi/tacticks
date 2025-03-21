@@ -114,7 +114,7 @@ class Unit:
 
         for patron in patrons:
             if (patron.getEffectType() == 2):
-                patron.activateEffect(self, enemies, enemy, gold)
+                patron.activateEffect(self, enemies, enemy, gold, boardState)
         
         if self.magicUser():
             if self.magic() < 1:
@@ -127,14 +127,30 @@ class Unit:
             else:
                 enemy[1].update_health(self.attack())
         #TODO: Checks for targeted enemies vs multiple enemies, checks for patron effects on attack, use different ones depending on unit type + patrons
+        if self.type() == "Executioner" or self.type() == "Archmage":
+            for e in enemies:
+                enemy_x_pos, enemy_y_pos = e[0]
+                if self.type() == "Executioner":
+                    if e[1].health() <= int(e[1].total_health() / 10):
+                        boardState[enemy_x_pos][enemy_y_pos] = 0
+                        # Modifies the list of enemies in place to remove the targeted enemy
+                        enemies[:] = [entry for entry in enemies if entry[0] != (enemy_x_pos, enemy_y_pos)]
+                        if e[1].health() > 0:
+                            self.addTotalHealth(e[1].health()) 
+                elif self.type() == "Archmage":
+                    if (enemy_x_pos, enemy_y_pos) != enemy_pos:
+                        e[1].update_health(abs(int(self.magic() / 10)))
         for e in enemies:
             enemy_x_pos, enemy_y_pos = e[0]
-            if e[1].health() <= 0:
-                boardState[enemy_x_pos][enemy_y_pos] = 0
-                # Modifies the list of enemies in place to remove the targeted enemy
-                enemies[:] = [entry for entry in enemies if entry[0] != (enemy_x_pos, enemy_y_pos)] 
-
+            self.check_enemy_death(e, enemies, boardState, e[0])
         return
+
+    def check_enemy_death(self, e, enemies, boardState, enemy_pos):
+        enemy_x_pos, enemy_y_pos = enemy_pos
+        if e[1].health() <= 0:
+            boardState[enemy_x_pos][enemy_y_pos] = 0
+            # Modifies the list of enemies in place to remove the targeted enemy
+            enemies[:] = [entry for entry in enemies if entry[0] != (enemy_x_pos, enemy_y_pos)] 
 
     def set_health(self, value: int) -> None:
         self._health = value

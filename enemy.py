@@ -26,8 +26,8 @@ class Enemy:
             case _:
                 self.selected_stats = self.stats[0] # Error, default to beetle stats
         if round > 3:
-            health_growth = int(2 * pow(1.1, round))
-            attack_growth = int(2 * pow(1.05, round))
+            health_growth = int(2 * pow(1.2, round))
+            attack_growth = int(2 * pow(1.07, round))
         
         self._total_health: int = self.selected_stats[0] + health_growth # round should be some slow exponential value just on hp and attack, movement and range creep should not exist(?)
         self._health: int = self.selected_stats[0] + health_growth

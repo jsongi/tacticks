@@ -140,6 +140,11 @@ class Patron:
             case 22: # Ritualist
                 return
             case 23: # Warlock
+                if chars.type() == "Healer" or chars.type() == "Mystic":
+                    if chars.magic() < 1:
+                        enemy[1].update_health(3)
+                    else:
+                        enemy[1].update_health(chars.magic() * 3)
                 return
             case 24: # Plague Doctor
                 for enemy in enemies:

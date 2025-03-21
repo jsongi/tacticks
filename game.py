@@ -58,11 +58,12 @@ levels = [["aaa", "aab", "aac", "aad", "aae"]
 #["aba", "abb", "abc", "abd", "abe"],
 #id has to start from 4
 unit1 = Unit(40, 40, 3, 0, 1, 2, 4, "Knight", 4, False, "Basic melee unit (Requires 3 to buy Executioner) [40 HP, 3 ATTACK, 1 RANGE, 2 MOVEMENT]", (1, 0))
+#unit1 = Unit(70, 70, 15, 0, 1, 2, 4, "Executioner", 8, False, "Rare melee unit, executes enemies when an attack reduces them to below 10% HP and gains Total HP equal to the amount executed", (0, 0))
+#unit1 = Unit(40, 40, 0, 25, 4, 2, 4, "Archmage", 8, True, "Rare magic unit, deals 1/10 of damage to all other enemies", (0, 0))
 patrons = []
 chars = [unit1] # , unit2, unit3, unit4 
 char_moves = []
 turn_counter = 5
-level = "aaa"
 level_counter = -1
 current_level = 3
 selected_levels = []
@@ -70,6 +71,7 @@ player_actions = 0
 is_player_turn = True
 last_clicked = -1
 time_keeper_owned = False
+warlock_owned = False
 turn_skip = False
 round = 1
 result = 1
@@ -137,13 +139,17 @@ while running:
                         current_level = 0
 
                     level = selected_levels[current_level]
+                    level = "aab"
 
                     time_keeper_owned = False
+                    warlock_owned = False
                     for patron in patrons:
                         if patron.getEffectType() == 8:
                             patron.activateEffect(chars, None, None, gold, None)
                         elif patron._effectIndex == 26:
                             time_keeper_owned = True
+                        elif patron._effectIndex == 23:
+                            warlock_owned = True
 
                     game_state = "battle"
                     board.read_board(level, chars, round)
@@ -192,13 +198,14 @@ while running:
                 board.activate_patrons(chars, patrons, gold)
 
                 # Healing after player turn is finished and before enemy attacks
-                for char in chars:
-                    if char._type == "Healer":
-                        for c in chars:
-                            c.addHealth(int(char.magic()))
-                    elif char._type == "Mystic":
-                        for c in chars:
-                            c.addHealth(int(char.magic()))
+                if not warlock_owned:    
+                    for char in chars:
+                        if char._type == "Healer":
+                            for c in chars:
+                                c.addHealth(int(char.magic()))
+                        elif char._type == "Mystic":
+                            for c in chars:
+                                c.addHealth(int(char.magic()))
 
 
                 if time_keeper_owned:

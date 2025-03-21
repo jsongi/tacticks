@@ -30,15 +30,15 @@ class Upgrade:
             case 2:
                 for char in chars:
                     char.addMagic(5)
-                self._magic += 5
+                self._magic += 3
                 return
             case 3:
                 for char in chars:
                     char.addAttack(5)
-                self._attack += 5
+                self._attack += 3
                 return
             case 4:
-                self._healing += 2
+                self._healing += 1
                 return
         return
     
