@@ -86,7 +86,6 @@ class Patron:
                 # Handled in shop
                 return
             case 12: # Varlet
-                gold[0] += 3
                 return
             case 13: # Surgeon
                 for char in chars:
@@ -208,6 +207,7 @@ class Patron:
             case 11: # Peddler
                 return
             case 12: # Varlet
+                gold[0] += 2
                 return
             case 13: # Surgeon
                 return
@@ -320,8 +320,12 @@ class Patron:
             case 18: # Round Table
                 if char.type() == "Knight" or char.type() == "Executioner":
                     self.statChanges += 1
-                char.addTotalHealth(self.statChanges * 30)
-                char.addAttack(self.statChanges * 2)
+                    char.addTotalHealth(self.statChanges * 30)
+                    char.addAttack(self.statChanges * 2)  
+                    for char in chars:
+                        char.addTotalHealth(30)
+                        char.addAttack(2)
+                        print(char._total_health)
                 return
             case 19: # Thieves Guild
                 return
@@ -344,11 +348,15 @@ class Patron:
             case 26: # Time Keeper
                 return
             case 28: # Bull's Eye
-                for char in chars:
-                    if char.type() == "Archer" or char.type() == "Catapult":
-                        self.statChanges += 1
-                    char.addTotalHealth(self.statChanges * 10)
-                    char.addAttack(self.statChanges * 4)
+                char.addTotalHealth(self.statChanges * 10)
+                char.addAttack(self.statChanges * 4)
+                if char.type() == "Archer" or char.type() == "Catapult":
+                    self.statChanges += 1
+                    for char in chars:
+                        char.addTotalHealth(10)
+                        char.addAttack(4)   
+                    char.addTotalHealth(10)
+                    char.addAttack(4)   
                 return
             case 29: # Inhibitors
                 char.addTotalHealth(20)

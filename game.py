@@ -57,7 +57,7 @@ levels = [["aaa", "aab", "aac", "aad", "aae"]
           ]
 #["aba", "abb", "abc", "abd", "abe"],
 #id has to start from 4
-unit1 = Unit(40, 40, 5, 0, 1, 2, 4, "Knight", 4, False, "Basic melee unit (Requires 3 to buy Executioner) [40 HP, 3 ATTACK, 1 RANGE, 2 MOVEMENT]", (1, 0))
+unit1 = Unit(40, 40, 3, 0, 1, 2, 4, "Knight", 4, False, "Basic melee unit (Requires 3 to buy Executioner) [40 HP, 3 ATTACK, 1 RANGE, 2 MOVEMENT]", (1, 0))
 patrons = []
 chars = [unit1] # , unit2, unit3, unit4 
 char_moves = []
