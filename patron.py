@@ -318,14 +318,13 @@ class Patron:
                 char.addAttack(self.statChanges)
                 return
             case 18: # Round Table
+                char.addTotalHealth(self.statChanges * 30)
+                char.addAttack(self.statChanges * 2) 
                 if char.type() == "Knight" or char.type() == "Executioner":
                     self.statChanges += 1
-                    char.addTotalHealth(self.statChanges * 30)
-                    char.addAttack(self.statChanges * 2)  
-                    for char in chars:
-                        char.addTotalHealth(30)
-                        char.addAttack(2)
-                        print(char._total_health)
+                    for c in chars:
+                        c.addTotalHealth(30)
+                        c.addAttack(2)
                 return
             case 19: # Thieves Guild
                 return
@@ -355,8 +354,6 @@ class Patron:
                     for char in chars:
                         char.addTotalHealth(10)
                         char.addAttack(4)   
-                    char.addTotalHealth(10)
-                    char.addAttack(4)   
                 return
             case 29: # Inhibitors
                 char.addTotalHealth(20)
