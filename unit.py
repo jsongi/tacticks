@@ -117,9 +117,15 @@ class Unit:
                 patron.activateEffect(self, enemies, enemy, gold)
         
         if self.magicUser():
-            enemy[1].update_health(self.magic())
+            if self.magic() < 1:
+                enemy[1].update_health(1)
+            else:
+                enemy[1].update_health(self.magic())
         else:
-            enemy[1].update_health(self.attack())
+            if self.attack() < 1:
+                enemy[1].update_health(1)
+            else:
+                enemy[1].update_health(self.attack())
         #TODO: Checks for targeted enemies vs multiple enemies, checks for patron effects on attack, use different ones depending on unit type + patrons
         for e in enemies:
             enemy_x_pos, enemy_y_pos = e[0]
@@ -132,6 +138,9 @@ class Unit:
 
     def set_health(self, value: int) -> None:
         self._health = value
+
+    def set_total_health(self, value: int) -> None:
+        self._total_health = value
 
     def update_health(self, value: int) -> None:
         self._health = self._health - value

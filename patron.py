@@ -83,10 +83,18 @@ class Patron:
                     char.addMovement(1)
                 return
             case 11: # Peddler
+                # Handled in shop
                 return
-            case 12: # 
+            case 12: # Varlet
+                gold[0] += 3
                 return
-            case 13:
+            case 13: # Surgeon
+                for char in chars:
+                    char.addHealth(int(char.totalHealth() / 4))
+                    if char.totalHealth() - 5 <= 0:
+                        char.setTotalHealth(1)
+                    else:
+                        char.addTotalHealth(-5)
                 return
             case 14: #Jack
                 for char in chars:
@@ -111,7 +119,13 @@ class Patron:
                     char.addMagic(self.statChanges)
                     char.addAttack(self.statChanges)
                 return
-            case 18:
+            case 18: # Round Table
+                for char in chars:
+                    if char.type() == "Knight" or char.type() == "Executioner":
+                        self.statChanges += 1
+                for char in chars:
+                    char.addTotalHealth(self.statChanges * 30)
+                    char.addAttack(self.statChanges * 2)  
                 return
             case 19: # Thieves Guild
                 for char in chars:
@@ -122,11 +136,11 @@ class Patron:
                 return
             case 20: # Open Courts
                 return
-            case 21:
+            case 21: # Glutton
                 return
-            case 22:
+            case 22: # Ritualist
                 return
-            case 23:
+            case 23: # Warlock
                 return
             case 24: # Plague Doctor
                 for enemy in enemies:
@@ -134,7 +148,122 @@ class Patron:
                     if health > 0:
                         enemy[1].update_health(health)
                 return
+            case 25: # Necromancer
+                return
+            case 26: # Time Keeper
+                return
+            case 27: # Runekeeprs
+                for char in chars:
+                    if char.type() == "Wizard" or char.type() == "Archmage":
+                        self.statChanges += 1
+                for char in chars:
+                    char.addTotalHealth(self.statChanges * 10)
+                    char.addAttack(self.statChanges * 5)  
+                return
+            case 28: # Bull's Eye
+                for char in chars:
+                    if char.type() == "Archer" or char.type() == "Catapult":
+                        self.statChanges += 1
+                for char in chars:
+                    char.addTotalHealth(self.statChanges * 10)
+                    char.addAttack(self.statChanges * 4)  
+                return
+            case 29: # Inhibitors
+                for char in chars:
+                    char.addTotalHealth(20)
+                    char.addAttack(6)
+                    char.addMagic(-6)
+                return
+            case 30: # Conclave
+                for char in chars:
+                    char.addTotalHealth(10)
+                    char.addAttack(-6)
+                    char.addMagic(8)
+                return
+            case 31: # Trader
+                return
 
+    def onUnitSold(self, char, chars, enemies, enemy, gold, boardState):
+        match self._effectIndex:
+            case 1: # Clergyman
+                return
+            case 2: # Librarian
+                return
+            case 3: # Conqueror
+                return
+            case 4: # Physician
+                return
+            case 5: # Merchant
+                return 
+            case 6: # Armorer
+                return
+            case 7: # Weaponsmith
+                return
+            case 8: # Enchanter
+                return
+            case 9: # Generalist
+                return
+            case 10: # Cobbler
+                return
+            case 11: # Peddler
+                return
+            case 12: # Varlet
+                return
+            case 13: # Surgeon
+                return
+            case 14: #Jack
+                return
+            case 15: # Conquistador
+                return
+            case 16: # Duelist
+                return
+            case 17: # Mercantilist
+                return
+            case 18: # Round Table
+                if char.type() == "Knight" or char.type() == "Executioner":
+                    self.statChanges -= 1
+                    for char in chars:
+                        char.addHealth(-1 * 30)
+                        char.addAttack(-1 * 2)        
+                return
+            case 19: # Thieves Guild
+                return
+            case 20: # Open Courts
+                # Handled in shop
+                return
+            case 21: # Glutton
+                return
+            case 22: # Ritualist
+                return
+            case 23: # Warlock
+                return
+            case 24: # Plague Doctor
+                return
+            case 25: # Necromancer
+                self.statChanges += 1
+                for char in chars:
+                    char.addAttack(5)
+                    char.addMagic(5)
+                    char.addTotalHealth(25)
+                return
+            case 26: # Time Keeper
+                return
+            case 27: # Runekeepers
+                return
+            case 28: # Bull's Eye
+                if char.type() == "Archer" or char.type() == "Catapult":
+                    self.statChanges -= 1
+                    for char in chars:
+                        char.addHealth(-1 * 10)
+                        char.addAttack(-1 * 4)    
+                return
+            case 29: # Inhibitors
+                return
+            case 30: # Conclave
+                return
+            case 31: # Trader
+                return
+    
     def onUnitPurchase(self, char, chars, enemies, enemy, gold, boardState):
         match self._effectIndex:
             case 1: # Clergyman
@@ -167,10 +296,12 @@ class Patron:
                 char.addMovement(1)
                 return
             case 11: # Peddler
+                # Handled in shop
                 return
-            case 12:
+            case 12: # Varlet
+                # Handled in shop
                 return
-            case 13:
+            case 13: # Surgeon
                 return
             case 14: #Jack
                 char.addTotalHealth(30)
@@ -186,23 +317,50 @@ class Patron:
                 char.addMagic(self.statChanges)
                 char.addAttack(self.statChanges)
                 return
-            case 18:
+            case 18: # Round Table
+                if char.type() == "Knight" or char.type() == "Executioner":
+                    self.statChanges += 1
+                char.addTotalHealth(self.statChanges * 30)
+                char.addAttack(self.statChanges * 2)
                 return
             case 19: # Thieves Guild
                 return
             case 20: # Open Courts
+                # Handled in shop
                 return
-            case 21:
+            case 21: # Glutton
                 return
-            case 22:
+            case 22: # Ritualist
                 return
-            case 23:
+            case 23: # Warlock
                 return
             case 24: # Plague Doctor
                 return
             case 25: # Necromancer
+                char.addMagic(self.statChanges * 5)
+                char.addAttack(self.statChanges * 5)
+                char.addTotalHealth(self.statChanges * 25)
                 return
             case 26: # Time Keeper
+                return
+            case 28: # Bull's Eye
+                for char in chars:
+                    if char.type() == "Archer" or char.type() == "Catapult":
+                        self.statChanges += 1
+                    char.addTotalHealth(self.statChanges * 10)
+                    char.addAttack(self.statChanges * 4)
+                return
+            case 29: # Inhibitors
+                char.addTotalHealth(20)
+                char.addAttack(6)
+                char.addMagic(-6)
+                return
+            case 30: # Conclave
+                char.addTotalHealth(10)
+                char.addAttack(-6)
+                char.addMagic(8)
+                return
+            case 31: # Trader
                 return
 
     def handleSold(self, chars, enemies, enemy, gold, boardState):
@@ -210,14 +368,18 @@ class Patron:
             case 1: # Clergyman
                 for char in chars:
                     char.addTotalHealth(-1 * self.statChanges)
+                    char.addHealth(self.statChanges)
+                self.statChanges = 0
                 return
             case 2: # Librarian
                 for char in chars:
                     char.addMagic(-1 * self.statChanges)
+                self.statChanges = 0
                 return
             case 3: # Conqueror
                 for char in chars:
                     char.addAttack(-1 * self.statChanges)
+                self.statChanges = 0
                 return
             case 4: # Physician
                 return
@@ -226,6 +388,7 @@ class Patron:
             case 6: # Armorer
                 for char in chars:
                     char.addTotalHealth(-40)
+                    char.addHealth(40)
                 return
             case 7: # Weaponsmith
                 for char in chars:
@@ -245,8 +408,9 @@ class Patron:
                     char.addMovement(-1)
                 return
             case 11: # Peddler
+                # Handled in shop
                 return
-            case 12:
+            case 12: # Varlet
                 return
             case 13:
                 return
@@ -255,6 +419,7 @@ class Patron:
                     char.addTotalHealth(-30)
                     char.addAttack(-8)
                     char.addMagic(-8)
+                    char.addHealth(30)
                 return
             case 15: # Conquistador
                 for char in chars:
@@ -268,23 +433,57 @@ class Patron:
                 for char in chars:
                     char.addMagic(-1 * self.statChanges)
                     char.addAttack(-1 * self.statChanges)
+                self.statChanges = 0
                 return
-            case 18:
+            case 18: # Round Table
+                for char in chars:
+                    char.addTotalHealth(self.statChanges * -30)
+                    char.addAttack(self.statChanges * 2)
+                    char.addHealth(self.statChanges * 30)
+                self.statChanges = 0
                 return
             case 19: # Thieves Guild
                 return
             case 20: # Open Courts
                 return
-            case 21:
+            case 21: # Glutton
                 return
-            case 22:
+            case 22: # Ritualist
                 return
-            case 23:
+            case 23: # Warlock
                 return
             case 24: # Plague Doctor
                 return            
             case 25: # Necromancer
+                for char in chars:
+                    char.addMagic(-1 * self.statChanges * 5)
+                    char.addAttack(-1 * self.statChanges * 5)
+                    char.addTotalHealth(-1 * self.statChanges * 25)
+                    char.addHealth(self.statChanges * 25)
                 return
             case 26: # Time Keeper
+                return
+            case 27: # Runekeepers
+                return
+            case 28: # Bull's Eye
+                for char in chars:
+                    char.addTotalHealth(self.statChanges * -10)
+                    char.addAttack(self.statChanges * 4)
+                    char.addHealth(self.statChanges * 10)
+                self.statChanges = 0
+                return
+            case 29: # Inhibitors         
+                for char in chars:
+                    char.addTotalHealth(-20)
+                    char.addAttack(-6)
+                    char.addMagic(6)
+                return
+            case 30: # Conclave
+                for char in chars:
+                    char.addTotalHealth(-10)
+                    char.addAttack(6)
+                    char.addMagic(-8)
+                return
+            case 31: # Trader
                 return
         return
