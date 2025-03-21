@@ -76,8 +76,10 @@ class Board:
         self.enemy_positions_highlighted = []
 
     def show_actions(self, screen, selectedRow, selectedCol, chars, id):
-        attack_range = chars[id - 4].range()
-        movement_range = chars[id - 4].movement()  # Get movement range
+        for char in chars:
+            if char.id() == id:
+                attack_range = char.range()
+                movement_range = char.movement()  # Get movement range
         rows, cols = len(self.boardState), len(self.boardState[0])  # Board dimensions
         search_attack_actions = False
         searching_attacks = False
