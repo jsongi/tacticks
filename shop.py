@@ -34,14 +34,26 @@ class Shop:
             Patron(34, 6, 9, 4, "Generalist", 0, "+6 Attack and +6 Magic to all units"),
             Patron(35, 6, 10, 4, "Cobbler", 0, "+1 movement to all units"),
             Patron(36, 4, 11, 4, "Peddler", 0, "1 free reroll per shop"),
+            Patron(27, 7, 12, 4, "Varlet", 0, "+2 gold when selling a unit"),
+            Patron(27, 6, 29, 4, "Inhibitors", 0, "-6 Magic to all units, +6 Attack +20 Total HP to all units"),
+            Patron(27, 6, 30, 4, "Conclave", 0, "-6 Attack to all units, +8 Magic +10 Total HP to all units"),
+            Patron(27, 6, 31, 4, "Trader", 0, "Buying an upgrade gives back 2 gold"),
+            Patron(27, 1, 13, 6, "Surgeon", 1, "At end of round, units lose 5 total HP, but heal 1/4 of total HP (Cannot go below 1 Total HP)"),
             Patron(24, 6, 14, 6, "Jack", 1, "Flat boost to all stats (+30 Total HP, +6 Attack, +6 Magic)"),
+            Patron(27, 6, 15, 4, "Conquistador", 1, "+1 range to all units"),
             Patron(37, 2, 16, 6, "Duelist", 1, "Buffs units with 1 range"),
-            Patron(38, 8, 17, 6, "Mercantilist", 1, "Boosts attack and magic of all units by half of current gold"),
-            Patron(39, 1, 19, 6, "Thieves Guild", 2, "+2 Gold at end of round per thief, +3 per Marauder"),
+            Patron(38, 8, 17, 6, "Mercantilist", 1, "Boosts attack and magic of all units by 1/2 of current gold"),
+            Patron(27, 6, 18, 6, "Round Table", 1, "+30 HP, +2 Attack per Knight or Executioner owned"),
+            Patron(27, 6, 27, 4, "Runekeepers", 1, "+5 HP +5 Magic per Wizard or Archmage owned"),
+            Patron(27, 6, 28, 4, "Bull's Eye", 1, "+10 HP +4 Attack per Archer or Catapult owned"),
+            Patron(39, 1, 19, 6, "Thieves Guild", 2, "+2 Gold at end of round per owned Thief, +3 per Marauder"),
             Patron(40, 4, 20, 6, "Open Courts", 2, "Removes owned unit requirements for rare units to appear in shop"),
-            Patron(23, 3, 24, 8, "Plague Doctor", 3, "Enemies lose half their current HP each turn"),
-            Patron(41, 7, 25, 8, "Necromancer", 3, "Gains stat increases per unit sold"),
-            Patron(42, 7, 26, 8, "Time Keeper", 3, "Every other enemy turn is skipped")
+            Patron(27, 1, 21, 6, "Glutton", 2, "Unit attack is increased by 1/10 of unit total HP"),
+            Patron(27, 1, 22, 6, "Ritualist", 2, "Destroy a unit at the end of round, gain stats"),
+            Patron(27, 6, 23, 6, "Warlock", 2, "Healers and Mystics no longer heal, but deal 4x damage"),
+            Patron(23, 3, 24, 10, "Plague Doctor", 3, "Enemies lose half their current HP each turn"),
+            Patron(41, 7, 25, 10, "Necromancer", 3, "Gains stat increases per unit sold"),
+            Patron(42, 5, 26, 10, "Time Keeper", 3, "Every other enemy turn is skipped")
         ]
 
         self._units = [
@@ -58,9 +70,10 @@ class Shop:
         ]
         # TODO: The images slots for this are temporary and need to be updated
         self._upgrades = [
-            Upgrade(22, 1, 1, 4, "Flat HP"),
-            Upgrade(22, 1, 2, 4, "Flat Magic"),
-            Upgrade(22, 1, 3, 4, "Flat Attack")
+            Upgrade(22, 1, 5, "Flat HP"),
+            Upgrade(22, 2, 5, "Flat Magic"),
+            Upgrade(22, 3, 5, "Flat Attack"),
+            Upgrade(22, 4, 5, "Healing")
         ]
 
         self.displayed_patrons = []
@@ -75,6 +88,7 @@ class Shop:
         self.ignore_unit_reqs = False
         self.move_units = False
         self.sell_action = False
+        self._heal = 0
 
         for image in assets:
             self._images.append(pygame.image.load(image)) 
@@ -95,7 +109,7 @@ class Shop:
     def refresh_items(self, chars):
         self.last_selected_unit = None
         self.move_units = False
-        rarity_weights = {0: 75, 1: 20, 2: 4, 3: 99}
+        rarity_weights = {0: 75, 1: 20, 2: 4, 3: 1}
         # Filter available patrons
         available_patrons = [p for p in self._patrons if p not in self._owned_patrons and not p.getPurchased()]
 
@@ -429,6 +443,7 @@ class Shop:
         result = 1
         if clicked_asset == None:
             return result
+        
         if clicked_asset == "reroll" and gold[0] >= self.reroll_cost:
             if self.free_reroll:
                 self.free_reroll = False
@@ -438,9 +453,16 @@ class Shop:
                 self.reroll_cost += 2
             self.refresh_items(chars)
             return result
+        
         elif clicked_asset == "continue":
+            
+            # this is ugly and should be reworked
+            for char in chars:
+                char.addHealth(self._heal)
+
             result = 0
             return result  # Return updated gold amount
+        
         elif clicked_asset in patrons and self.sell_action:
             clicked_asset.setPurchased(False)
             self.selected_item.handleSold(chars, None, None, gold, None)
@@ -448,12 +470,18 @@ class Shop:
             patrons.remove(self.selected_item)
             self.sell_action = False
             return result
+        
         elif clicked_asset == "sellchar":
             if len(chars) > 1:
                 gold[0] += int(self.selected_item.getCost() / 2)
                 chars.remove(self.selected_item)
+            for patron in patrons:
+                if patron.getEffectType() == 6 or patron.getEffectType() == 7:
+                    patron.onUnitSold(self.selected_item, chars, None, None, gold, None)
+                    continue
             self.last_selected_unit = None
             return result
+        
         elif clicked_asset in self._patrons and gold[0] >= clicked_asset.getCost() and len(patrons) < 5:
             gold[0] -= clicked_asset.getCost()
             clicked_asset.setPurchased(True)
@@ -463,6 +491,7 @@ class Shop:
                 self.activate_patrons(patrons, gold, chars)
             self.displayed_patrons[self.displayed_patrons.index(clicked_asset)] = None
             return result
+        
         elif clicked_asset in self._units and gold[0] >= clicked_asset.getCost() and len(chars) < 6:
             gold[0] -= clicked_asset.getCost()
 
@@ -487,22 +516,37 @@ class Shop:
             for patron in patrons:
                 patron.onUnitPurchase(clicked_asset, chars, None, None, gold, None)
 
+            for upgrade in self._upgrades:
+                upgrade.onUnitPurchase(clicked_asset)
+
             chars.append(copy.copy(clicked_asset))
             self.displayed_units[self.displayed_units.index(clicked_asset)] = None
             return result
+        
         elif clicked_asset in self._upgrades and gold[0] >= clicked_asset.getCost():
             gold[0] -= clicked_asset.getCost()
             clicked_asset.activateEffect(chars)
             self.displayed_upgrades[self.displayed_upgrades.index(clicked_asset)] = None
+            
+            for patron in patrons:
+                if patron.getEffectIndex() == 31:
+                    gold[0] += 2
+
+            # this was added way later and should be reworked
+            if clicked_asset.getName() == "Healing":
+                self._heal = clicked_asset._healing
+
             return result
+        
         elif clicked_asset == "movedunit":
             target_row, target_col = self.selected_item.location()
             self.selected_item.setLocation(self.last_selected_unit.location())
             self.last_selected_unit.setLocation((target_row, target_col))
 
-            self.selected_item = None  
+            self.selected_item = None
             self.last_selected_unit = None
             return result
+        
         else:
             return result
         
