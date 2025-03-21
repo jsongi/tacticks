@@ -5,6 +5,8 @@ from board import Board
 from unit import Unit
 from shop import Shop
 
+# To anyone reading through this code, I am sorry
+
 assets = [
     "assets/grasstile.png", # 0
     "assets/movementhighlight.png", # 1
