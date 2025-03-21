@@ -46,10 +46,10 @@ class Upgrade:
     def onUnitPurchase(self, char):
         match self.effectIndex:
             case 1:
-                char.addTotalHealth(15)
+                char.addTotalHealth(self._totalHealth)
                 return
             case 2:
-                char.addMagic(5)
+                char.addMagic(self._magic)
                 return
             case 3:
                 char.addAttack(self._attack)

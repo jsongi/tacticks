@@ -478,7 +478,6 @@ class Shop:
             for patron in patrons:
                 if patron.getEffectType() == 6 or patron.getEffectType() == 7:
                     patron.onUnitSold(self.selected_item, chars, None, None, gold, None)
-                    continue
             self.last_selected_unit = None
             return result
         
@@ -509,17 +508,20 @@ class Shop:
                 if loc not in existing_locations:
                     new_loc = loc
                     break
-
-            clicked_asset.setId(new_id)
-            clicked_asset.setLocation(new_loc)
             
+            new_char = copy.deepcopy(clicked_asset)
+
+            new_char.setId(new_id)
+            new_char.setLocation(new_loc)
+            chars.append(new_char)
+
             for patron in patrons:
-                patron.onUnitPurchase(clicked_asset, chars, None, None, gold, None)
+                patron.onUnitPurchase(new_char, chars, None, None, gold, None)
 
             for upgrade in self._upgrades:
-                upgrade.onUnitPurchase(clicked_asset)
+                upgrade.onUnitPurchase(new_char)
 
-            chars.append(copy.copy(clicked_asset))
+            
             self.displayed_units[self.displayed_units.index(clicked_asset)] = None
             return result
         
@@ -529,7 +531,7 @@ class Shop:
             self.displayed_upgrades[self.displayed_upgrades.index(clicked_asset)] = None
             
             for patron in patrons:
-                if patron.getEffectIndex() == 31:
+                if patron._effectIndex == 31:
                     gold[0] += 2
 
             # this was added way later and should be reworked
