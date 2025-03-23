@@ -27,7 +27,7 @@ assets = [
     "assets/mite.png", # enemy type, 16
     "assets/tempgrasstile.png", # enemy type, 17
     "assets/bombardierbeetle.png", # enemy type, 18
-    "assets/tempgrasstile.png", # enemy type, 19
+    "assets/bossbug1.png", # enemy type, 19
     "assets/tempgrasstile.png", # enemy type, 20
     "assets/tempgrasstile.png", # enemy type, 21
     "assets/tempgrasstile.png", # enemy type, 22
@@ -42,7 +42,7 @@ assets = [
     "assets/armorer.png", # 31
     "assets/weaponsmith.png", # 32
     "assets/enchanter.png", # 33
-    "assets/tempgrasstile.png", # temp 34
+    "assets/generalist.png", # 34
     "assets/cobbler.png", # 35
     "assets/peddler.png", # 36
     "assets/duelist.png", # 37
@@ -50,7 +50,19 @@ assets = [
     "assets/thievesguild.png", # 39
     "assets/opencourts.png", # 40
     "assets/necromancer.png", # 41
-    "assets/timekeeper.png" # 42
+    "assets/timekeeper.png", # 42
+    "assets/bullseye.png", # 43
+    "assets/conclave.png", # 44
+    "assets/conquistador.png", # 45
+    "assets/glutton.png", # 46
+    "assets/inhibitor.png", # 47
+    "assets/ritualist.png", # 48
+    "assets/roundtable.png", # 49
+    "assets/runekeeper.png", # 50
+    "assets/surgeon.png", # 51
+    "assets/trader.png", # 52
+    "assets/varlet.png", # 53
+    "assets/warlock.png" # 54
 ]
 levels = [["aaa", "aab", "aac", "aad", "aae"]
           
@@ -231,7 +243,7 @@ while running:
                 if gold[0] >= 25:
                     gold[0] += 5
                 else:
-                    gold[0] += gold[0] % 5
+                    gold[0] += int(gold[0] / 5)
                 
                 gold[0] += 3
                 char_moves = []
@@ -242,6 +254,11 @@ while running:
                 for patron in patrons:
                     if patron.getEffectType() == 1:
                         patron.activateEffect(chars, None, None, gold, None)
+
+                for char in chars:
+                    if char._type == "Mystic":
+                        for c in chars:
+                            c.addTotalHealth(10)
 
                 # Activate shop patron effects
                 shop.activate_patrons(patrons, gold, chars)
