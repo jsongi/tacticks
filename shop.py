@@ -17,10 +17,6 @@ class Shop:
         self._images = []  # Dictionary containing item categories
         self.reroll_cost = 5  # Cost for rerolling the shop
         self.unit_id = 0
-        
-        self._owned_patrons = [
-
-        ]
 
         self._patrons = [
             Patron(25, 1, 1, 4, "Clergyman", 0, "+5 total HP to all units at end of round"),
@@ -34,23 +30,23 @@ class Shop:
             Patron(34, 6, 9, 4, "Generalist", 0, "+6 Attack and +6 Magic to all units"),
             Patron(35, 6, 10, 4, "Cobbler", 0, "+1 movement to all units"),
             Patron(36, 4, 11, 4, "Peddler", 0, "1 free reroll per shop"),
-            Patron(27, 7, 12, 4, "Varlet", 0, "+2 gold when selling a unit"),
-            Patron(27, 6, 29, 4, "Inhibitors", 0, "-6 Magic to all units, +6 Attack +20 Total HP to all units"),
-            Patron(27, 6, 30, 4, "Conclave", 0, "-6 Attack to all units, +8 Magic +10 Total HP to all units"),
-            Patron(27, 6, 31, 4, "Trader", 0, "Buying an upgrade gives back 2 gold"),
-            Patron(27, 1, 13, 6, "Surgeon", 1, "At end of round, units lose 5 total HP, but heal 1/4 of total HP (Cannot go below 1 Total HP)"),
+            Patron(53, 7, 12, 4, "Varlet", 0, "+2 gold when selling a unit"),
+            Patron(47, 6, 29, 4, "Inhibitor", 0, "-6 Magic to all units, +6 Attack +20 Total HP to all units"),
+            Patron(44, 6, 30, 4, "Conclave", 0, "-6 Attack to all units, +8 Magic +10 Total HP to all units"),
+            Patron(52, 6, 31, 4, "Trader", 0, "Buying an upgrade gives back 2 gold"),
+            Patron(51, 1, 13, 6, "Surgeon", 1, "At end of round, units lose 5 total HP, but heal 1/4 of total HP (Cannot go below 1 Total HP)"),
             Patron(24, 6, 14, 6, "Jack", 1, "Flat boost to all stats (+30 Total HP, +6 Attack, +6 Magic)"),
-            Patron(27, 6, 15, 4, "Conquistador", 1, "+1 range to all units"),
+            Patron(45, 6, 15, 6, "Conquistador", 1, "+1 range to all units"),
             Patron(37, 2, 16, 6, "Duelist", 1, "Units with 1 range deal 15 more damage"),
             Patron(38, 8, 17, 6, "Mercantilist", 1, "Boosts attack and magic of all units by 1/2 of current gold"),
-            Patron(27, 6, 18, 6, "Round Table", 1, "+30 HP, +3 Attack per Knight or Executioner owned"),
-            Patron(27, 6, 27, 4, "Runekeepers", 1, "+5 HP +7 Magic per Wizard or Archmage owned"),
-            Patron(27, 6, 28, 4, "Bull's Eye", 1, "+10 HP +5 Attack per Archer or Catapult owned"),
-            Patron(39, 1, 19, 6, "Thieves Guild", 2, "+2 Gold at end of round per owned Thief, +3 per Marauder"),
-            Patron(40, 4, 20, 6, "Open Courts", 2, "Removes owned unit requirements for rare units to appear in shop"),
-            Patron(27, 1, 21, 6, "Glutton", 2, "Unit attack is increased by 1/10 of unit total HP"),
-            Patron(27, 1, 22, 6, "Ritualist", 2, "Destroy a unit at the end of round, gain stats"),
-            Patron(27, 2, 23, 6, "Warlock", 0, "Healers and Mystics no longer heal, but deal 4x damage"),
+            Patron(49, 6, 18, 6, "Round Table", 1, "+30 HP, +3 Attack per Knight or Executioner owned"),
+            Patron(50, 6, 27, 6, "Runekeeper", 1, "+5 HP +7 Magic per Wizard or Archmage owned"),
+            Patron(43, 6, 28, 6, "Bullseye", 1, "+10 HP +5 Attack per Archer or Catapult owned"),
+            Patron(39, 1, 19, 8, "Thieves Guild", 2, "+2 Gold at end of round per owned Thief, +3 per Marauder"),
+            Patron(40, 4, 20, 8, "Open Courts", 2, "Removes owned unit requirements for rare units to appear in shop"),
+            Patron(46, 1, 21, 8, "Glutton", 2, "Unit attack and magic is increased by 1/10 of unit total HP"),
+            Patron(48, 1, 22, 8, "Ritualist", 2, "Destroy a random unit at the end of round, gain stat increases for each unit destroyed"),
+            Patron(54, 2, 23, 8, "Warlock", 2, "Healers and Mystics no longer heal, but deal 4x damage"),
             Patron(23, 3, 24, 10, "Plague Doctor", 3, "Enemies lose half their current HP each turn"),
             Patron(41, 7, 25, 10, "Necromancer", 3, "Gains stat increases per unit sold"),
             Patron(42, 5, 26, 10, "Time Keeper", 3, "Every other enemy turn is skipped")
@@ -61,12 +57,12 @@ class Shop:
             Unit(30, 30, 2, 0, 1, 4, 0, "Thief", 4, False, "Basic melee unit, generates 1 gold at end of round (Requires 3 to buy Marauder) [30 HP, 2 ATTACK, 1 RANGE, 4 MOVEMENT]", (0, 0)),
             Unit(25, 25, 4, 0, 3, 3, 0, "Archer", 4, False, "Basic ranged unit (Requires 3 to purchase Catapult) [25 HP, 4 ATTACK, 3 RANGE, 3 MOVEMENT]", (0, 0)),
             Unit(20, 20, 0, 6, 3, 2, 0, "Wizard", 4, True, "Basic magic unit (Requires 3 to purchase Archmage) [20 HP, 6 MAGIC, 3 RANGE, 2 MOVEMENT]", (0, 0)),
-            Unit(20, 20, 0, 2, 3, 3, 0, "Healer", 3, True, "Basic magic unit, heals allies (Requires 3 to purchase Mystic) [20 HP, 3 MAGIC, 3 RANGE, 3 MOVEMENT]", (0, 0)),
-            Unit(70, 70, 15, 0, 1, 2, 0, "Executioner", 8, False, "Rare melee unit, executes enemies when an attack reduces them to below 10% HP and gains Total HP equal to the amount executed", (0, 0)),
-            Unit(50, 50, 10, 0, 1, 4, 0, "Marauder", 8, False, "Rare melee unit", (0, 0)),
+            Unit(20, 20, 0, 2, 3, 3, 0, "Healer", 4, True, "Basic magic unit, heals allies (Requires 3 to purchase Mystic) [20 HP, 3 MAGIC, 3 RANGE, 3 MOVEMENT]", (0, 0)),
+            Unit(70, 70, 15, 0, 1, 2, 0, "Executioner", 8, False, "Rare melee unit, executes enemies when its attack reduces them to below 10% HP and gains Total HP equal to the remaining enemy HP", (0, 0)),
+            Unit(50, 50, 10, 0, 1, 4, 0, "Marauder", 8, False, "Rare melee unit, generate 1 gold and gain +2 Attack when dealing the killing blow to an enemy", (0, 0)),
             Unit(40, 40, 40, 0, 10, 1, 0, "Catapult", 8, False, "Rare ranged unit, nearly global range [40 HP, 40 ATTACK, 10 RANGE, 1 MOVEMENT]", (0, 0)),
             Unit(40, 40, 0, 25, 4, 2, 0, "Archmage", 8, True, "Rare magic unit, deals 1/10 of damage to all other enemies", (0, 0)),
-            Unit(30, 30, 0, 20, 4, 2, 0, "Mystic", 8, True, "Rare magic unit, heals allies", (0, 0))
+            Unit(30, 30, 0, 20, 4, 2, 0, "Mystic", 8, True, "Rare magic unit, heals allies, gives all units 10 Total HP at end of round", (0, 0))
         ]
         # TODO: The images slots for this are temporary and need to be updated
         self._upgrades = [
@@ -78,7 +74,7 @@ class Shop:
 
         self.displayed_patrons = []
         self.displayed_units = []
-        self.displayed_upgrades = []
+        self.displayed_upgrades = None
         self.unit_ids = [4, 5, 6, 7, 8, 9]
         self.unit_locs = [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2)]
         self.hovered_item = None
@@ -111,7 +107,7 @@ class Shop:
         self.move_units = False
         rarity_weights = {0: 75, 1: 20, 2: 4, 3: 1}
         # Filter available patrons
-        available_patrons = [p for p in self._patrons if p not in self._owned_patrons and not p.getPurchased()]
+        available_patrons = [p for p in self._patrons if not p.getPurchased()]
 
         num_to_select = 3
 
@@ -171,9 +167,10 @@ class Shop:
         # Randomly sample from the adjusted pool
         self.displayed_units = selected_units
 
-        self.displayed_upgrades = random.sample(
-            [u for u in self._upgrades], 2
-        )
+        if self.displayed_upgrades is None:
+            self.displayed_upgrades = random.sample(
+                [u for u in self._upgrades], 2
+            )
 
     def check_hover(self, mouse_x, mouse_y, patrons, chars):
         """ Detects which item is being hovered over and stores it. """
@@ -460,6 +457,7 @@ class Shop:
             for char in chars:
                 char.addHealth(self._heal)
 
+            self.displayed_upgrades = None
             result = 0
             return result  # Return updated gold amount
         
