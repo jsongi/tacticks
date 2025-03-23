@@ -13,8 +13,8 @@ class Enemy:
             ]
         
         self.selected_stats = 0
-        health_growth = 0
-        attack_growth = 0
+        self.health_growth = 0
+        self.attack_growth = 0
 
         match id:
             case 14:
@@ -26,12 +26,12 @@ class Enemy:
             case _:
                 self.selected_stats = self.stats[0] # Error, default to beetle stats
         if round > 3:
-            health_growth = int(2 * pow(1.2, round))
-            attack_growth = int(2 * pow(1.07, round))
+            self.health_growth = int(2 * pow(1.2, round))
+            self.attack_growth = int(2 * pow(1.07, round))
         
-        self._total_health: int = self.selected_stats[0] + health_growth # round should be some slow exponential value just on hp and attack, movement and range creep should not exist(?)
-        self._health: int = self.selected_stats[0] + health_growth
-        self._attack: int = self.selected_stats[1] + attack_growth
+        self._total_health: int = self.selected_stats[0] + self.health_growth # round should be some slow exponential value just on hp and attack, movement and range creep should not exist(?)
+        self._health: int = self.selected_stats[0] + self.health_growth
+        self._attack: int = self.selected_stats[1] + self.attack_growth
         self._range: int = self.selected_stats[2]
         self._movement: int = self.selected_stats[3]
         self._id: int = self.selected_stats[4]
@@ -55,21 +55,25 @@ class Enemy:
     def id(self) -> int:
         return self._id
     
+    def add_health(self, value: int) -> None:
+        if self._health + value > self.total_health:
+            self._health = self.total_health
+        else:
+            self._health += value
+
     def update_health(self, value: int) -> None:
         self._health = self._health - value
 
     def handle_effects(self, chars, boardState, char_positions):
         match self._id:
+            case 19:
+                self.add_health(((int)(self.health_growth / 5)))
             case 20: 
                 for c in chars:
                     if c.health() - self._attack / 5 < 0:
                         c.set_health(1)
                     else:
-                        c.update_health((int)(self._attack / 5))
-            case 15:
-                return
-            case 16:
-                return                
+                        c.update_health((int)(self._attack / 5))          
                 
         return
     
