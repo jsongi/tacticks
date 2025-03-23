@@ -64,16 +64,21 @@ assets = [
     "assets/varlet.png", # 53
     "assets/warlock.png" # 54
 ]
-levels = [["aaa", "aab", "aac", "aad", "aae"]
+levels = [["aaa", "aab", "aac", "aad", "aae", "aaf"]
           
           ]
 #["aba", "abb", "abc", "abd", "abe"],
 #id has to start from 4
-unit1 = Unit(40, 40, 3, 0, 1, 2, 4, "Knight", 4, False, "Basic melee unit (Requires 3 to buy Executioner) [40 HP, 3 ATTACK, 1 RANGE, 2 MOVEMENT]", (1, 0))
-#unit1 = Unit(70, 70, 15, 0, 1, 2, 4, "Executioner", 8, False, "Rare melee unit, executes enemies when an attack reduces them to below 10% HP and gains Total HP equal to the amount executed", (0, 0))
-#unit1 = Unit(40, 40, 0, 25, 4, 2, 4, "Archmage", 8, True, "Rare magic unit, deals 1/10 of damage to all other enemies", (0, 0))
+units = [
+            Unit(40, 40, 3, 0, 1, 2, 4, "Knight", 4, False, "Basic melee unit (Requires 3 to buy Executioner) [40 HP, 3 ATTACK, 1 RANGE, 2 MOVEMENT]", (0, 0)),
+            Unit(30, 30, 2, 0, 1, 4, 4, "Thief", 4, False, "Basic melee unit, generates 1 gold at end of round (Requires 3 to buy Marauder) [30 HP, 2 ATTACK, 1 RANGE, 4 MOVEMENT]", (0, 0)),
+            Unit(25, 25, 4, 0, 3, 3, 4, "Archer", 4, False, "Basic ranged unit (Requires 3 to purchase Catapult) [25 HP, 4 ATTACK, 3 RANGE, 3 MOVEMENT]", (0, 0)),
+            Unit(20, 20, 0, 6, 3, 2, 4, "Wizard", 4, True, "Basic magic unit (Requires 3 to purchase Archmage) [20 HP, 6 MAGIC, 3 RANGE, 2 MOVEMENT]", (0, 0)),
+            Unit(20, 20, 0, 2, 3, 3, 4, "Healer", 4, True, "Basic magic unit, heals allies (Requires 3 to purchase Mystic) [20 HP, 3 MAGIC, 3 RANGE, 3 MOVEMENT]", (0, 0))
+        ]
+starting_unit = random.choice(units)
 patrons = []
-chars = [unit1] # , unit2, unit3, unit4 
+chars = [starting_unit] # , unit2, unit3, unit4 
 char_moves = []
 turn_counter = 5
 level_counter = -1
@@ -87,9 +92,11 @@ warlock_owned = False
 turn_skip = False
 round = 1
 result = 1
-gold = [999999] #set as this for testing, lower to 5(?) later
-game_state = "shop"
+gold = [9999] #set as this for testing, lower to 5(?) later
+game_state = "battle"
 enemies_remaining = 1
+
+
 
 # Initialize Pygame
 pygame.init()
@@ -110,6 +117,9 @@ cell_height = 31
 
 shop = Shop(assets, chars)
 board = Board(assets)
+
+level = "aaa"
+board.read_board(level, chars, round)
 
 boardState = ["default", 0]
 
@@ -151,7 +161,6 @@ while running:
                         current_level = 0
 
                     level = selected_levels[current_level]
-                    level = "aab"
 
                     time_keeper_owned = False
                     warlock_owned = False
@@ -170,7 +179,7 @@ while running:
                     result = 1
             else:
                 shop.display(screen, gold, patrons, chars)
-        else:
+        elif game_state == "battle":
             if is_player_turn:
                 if event.type == pygame.MOUSEBUTTONDOWN:  # Detect mouse click
                     mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -259,6 +268,8 @@ while running:
                     if char._type == "Mystic":
                         for c in chars:
                             c.addTotalHealth(10)
+                    if char._type == "Thief":
+                        gold[0] += 1
 
                 # Activate shop patron effects
                 shop.activate_patrons(patrons, gold, chars)
