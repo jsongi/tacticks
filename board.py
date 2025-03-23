@@ -164,6 +164,7 @@ class Board:
         # Clear board state to read in fresh level
         self.boardState = []
         self.char_positions = []
+        self.idTypes = []
 
         with open("levels.txt", 'r') as file:
             
