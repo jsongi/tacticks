@@ -1,3 +1,5 @@
+import random
+
 class Patron:
 
     def __init__(self, imageNum, effectType, effectIndex, cost, name, rarity, description):
@@ -136,8 +138,24 @@ class Patron:
             case 20: # Open Courts
                 return
             case 21: # Glutton
+                self.statChanges = {char: char.total_health() / 10 for char in chars}
+                for char in chars:
+                    stat_increase = self.statChanges.get(char, 0)  # Safely get the stat change or default to 0
+                    char.addMagic(stat_increase)
+                    char.addAttack(stat_increase)
                 return
             case 22: # Ritualist
+                if len(chars) > 1:
+                    for char in chars:
+                        char.addMagic(-1 * self.statChanges * 10)
+                        char.addAttack(-1 * self.statChanges * 10)
+                        char.addTotalHealth(-1 * self.statChanges * 30)
+                        chars.remove(random.choice(chars))
+                        self.statChanges += 1
+                    for char in chars:
+                        char.addMagic(self.statChanges * 10)
+                        char.addAttack(self.statChanges * 10)
+                        char.addTotalHealth(self.statChanges * 30)
                 return
             case 23: # Warlock
                 if chars.type() == "Healer" or chars.type() == "Mystic":
@@ -339,6 +357,9 @@ class Patron:
             case 21: # Glutton
                 return
             case 22: # Ritualist
+                char.addMagic(self.statChanges * 10)
+                char.addAttack(self.statChanges * 10)
+                char.addTotalHealth(self.statChanges * 30)
                 return
             case 23: # Warlock
                 return
@@ -459,6 +480,12 @@ class Patron:
             case 21: # Glutton
                 return
             case 22: # Ritualist
+                for char in chars:
+                    char.addMagic(-1 * self.statChanges * 10)
+                    char.addAttack(-1 * self.statChanges * 10)
+                    char.addTotalHealth(-1 * self.statChanges * 30)
+                    char.addHealth(self.statChanges * 30)
+                self.statChanges = 0
                 return
             case 23: # Warlock
                 return
