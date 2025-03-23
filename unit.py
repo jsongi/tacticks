@@ -127,7 +127,7 @@ class Unit:
             else:
                 enemy[1].update_health(self.attack())
         #TODO: Checks for targeted enemies vs multiple enemies, checks for patron effects on attack, use different ones depending on unit type + patrons
-        if self.type() == "Executioner" or self.type() == "Archmage":
+        if self.type() == "Executioner" or self.type() == "Archmage" or self.type() == "Marauder":
             for e in enemies:
                 enemy_x_pos, enemy_y_pos = e[0]
                 if self.type() == "Executioner":
@@ -140,6 +140,10 @@ class Unit:
                 elif self.type() == "Archmage":
                     if (enemy_x_pos, enemy_y_pos) != enemy_pos:
                         e[1].update_health(abs(int(self.magic() / 10)))
+                elif self.type() == "Marauder":
+                    if e[1].health() <= 0:
+                        self.addAttack(2)
+                        gold[0] += 1
         for e in enemies:
             enemy_x_pos, enemy_y_pos = e[0]
             self.check_enemy_death(e, enemies, boardState, e[0])
