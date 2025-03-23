@@ -115,7 +115,7 @@ class Patron:
                 for char in chars:
                     char.addMagic(-1 * self.statChanges)
                     char.addAttack(-1 * self.statChanges)
-                self.statChanges = gold[0] / 2
+                self.statChanges = int(gold[0] / 2)
                 for char in chars:
                     char.addMagic(self.statChanges)
                     char.addAttack(self.statChanges)
@@ -138,6 +138,10 @@ class Patron:
             case 20: # Open Courts
                 return
             case 21: # Glutton
+                for char in chars:
+                    stat_increase = self.statChanges.get(char, 0)  # Safely get the stat change or default to 0
+                    char.addMagic(-1 * stat_increase)
+                    char.addAttack(-1 * stat_increase)
                 self.statChanges = {char: char.total_health() / 10 for char in chars}
                 for char in chars:
                     stat_increase = self.statChanges.get(char, 0)  # Safely get the stat change or default to 0
